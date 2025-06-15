@@ -1,6 +1,6 @@
 import { wait } from "../util/helper";
 
-export const host = "http://localhost:3152";
+export const host = "http://same-server-production.up.railway.app";
 
 export const generateToken = async () => {
   const res = await fetch(`${host}/authenticate`);
