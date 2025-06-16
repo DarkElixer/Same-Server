@@ -18,7 +18,7 @@ function LiveCategories() {
   if (isLoading) return <Loader />;
   return (
     <>
-      <div className="heading--secondary">
+      <div className="header">
         <Heading as="h2" $type="secondary">
           Live Categories
         </Heading>

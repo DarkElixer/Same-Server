@@ -16,17 +16,14 @@ import Image from "../../ui/Image";
 function LiveChannels() {
   const { categoryId } = useParams();
   const categoryIdFromURL = categoryId.split("-").pop();
-  const { ref, data, isFetchingNextPage, status } = useInfiniteScrolling(
-    "live",
-    categoryIdFromURL,
-    getAllCategoriesChannel
-  );
+  const { ref, data, isFetchingNextPage, status, hasNextPage } =
+    useInfiniteScrolling("live", categoryIdFromURL, getAllCategoriesChannel);
   const categoryName =
     categoryId.slice(0, categoryId.lastIndexOf("-")).toUpperCase() +
     " LIVE CHANNELS";
   return (
     <>
-      <div className="heading--secondary">
+      <div className="header">
         <Heading as="h2" $type="secondary">
           {categoryName}
         </Heading>
@@ -46,16 +43,19 @@ function LiveChannels() {
                   <Image
                     variant="small"
                     altText={series.name}
-                    src={`${portal}/stalker_portal/misc/logos/320/${series.id}.png`}
+                    // src={`${portal}/stalker_portal/misc/logos/320/${series.id}.png`}
+                    src={`${portal}/stalker_portal/misc/logos/320/${series.logo}`}
                   />
                   <p>{series.name}</p>
                 </Box>
               ))}
             </Fragment>
           ))}
-          <Footer>
-            <div ref={ref}>{isFetchingNextPage && <MiniLoader />}</div>
-          </Footer>
+          {hasNextPage && (
+            <Footer>
+              <div ref={ref}>{isFetchingNextPage && <MiniLoader />}</div>
+            </Footer>
+          )}
         </GridBox>
       ) : (
         <Loader />
