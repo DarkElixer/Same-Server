@@ -1,9 +1,94 @@
 const axios = require("axios");
+const { Parser } = require("m3u8-parser");
+const { URL } = require("url");
 const { headers } = require("../constants/data");
 
 const portal = process.env.portal;
+let lastIndex = -1;
+exports.proxySegment = async (req, res) => {
+  try {
+    const segmentUrl = decodeURIComponent(req.query.url);
 
-exports.proxyHttpStream = async (req, res, next) => {};
+    // Fetch the segment with axios using stream response
+    const response = await axios.get(segmentUrl, {
+      headers: req.headers,
+      responseType: "stream",
+    });
+
+    // Forward headers from the original response
+    Object.entries(response.headers).forEach(([name, value]) => {
+      res.setHeader(name, value);
+    });
+
+    // Pipe the response stream
+    response.data.pipe(res);
+  } catch (error) {
+    console.error("Segment proxy error:", error);
+    res.status(500).send("Segment proxy error");
+  }
+};
+
+exports.proxyHttpStream = async (req, res, next) => {
+  try {
+    const originalUrl = decodeURIComponent(req.query.url);
+
+    for (let i = originalUrl.length - 1; i > 0; i--) {
+      if (originalUrl[i] === "/") {
+        lastIndex = i;
+        break;
+      }
+    }
+    let baseUrl = originalUrl.substring(0, lastIndex + 1);
+    // Fetch the original m3u8 with axios
+    let changedUrlToTrack = originalUrl.replace(
+      "video.m3u8",
+      "tracks-v1a1/mono.m3u8"
+    );
+    const response = await axios.get(changedUrlToTrack, {
+      headers: req.headers,
+      // responseType: "text",
+    });
+
+    const m3u8Content = response.data;
+    const parser = new Parser();
+
+    parser.push(m3u8Content);
+    parser.end();
+
+    // const parsedManifest = parser.manifest;
+
+    // Rewrite URIs to point to our proxy
+    const rewrittenManifest = m3u8Content
+      .split("\n")
+      .map((line) => {
+        // Handle segment lines (either .ts or .m3u8)
+        if (
+          line.split("?")[0].endsWith(".ts") ||
+          line.split("?")[0].endsWith(".m3u8")
+        ) {
+          // Skip comments and empty lines
+          if (line.startsWith("#")) return line;
+
+          // Convert relative URLs to absolute
+          const segmentUrl = line.startsWith("http")
+            ? line
+            : new URL(line, baseUrl).href;
+
+          // Point to our proxy endpoint
+          return `/vod/proxy/segment?url=${encodeURIComponent(segmentUrl)}`;
+        }
+        return line;
+      })
+      .join("\n");
+    res.header("Content-Type", "application/vnd.apple.mpegurl");
+
+    res.send(rewrittenManifest);
+  } catch (error) {
+    console.error("Proxy error:", error);
+    res.status(500).send("Proxy error");
+  }
+};
+
 exports.getCategories = async (req, res, next) => {
   const { token } = req.body;
   try {

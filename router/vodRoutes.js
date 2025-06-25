@@ -12,5 +12,13 @@ router
   );
 router.route("/search").post(vodController.getVodBySearch);
 
-router.route("/proxy").get(vodController.proxyHttpStream);
+router.route("/proxy/master.m3u8").get((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  next();
+}, vodController.proxyHttpStream);
+router.route("/proxy/segment").get((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+}, vodController.proxySegment);
 module.exports = router;

@@ -5,6 +5,7 @@ import "../../styles/player.css";
 
 import ReactJwPlayer from "react-jw-player";
 import Loader from "../../ui/Loader";
+import { host } from "../../services/apiIptv";
 
 function SeriesJwPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
@@ -33,17 +34,21 @@ function SeriesJwPlayer() {
       <ReactJwPlayer
         playerId="my-unique-id"
         playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
-        file={seriesLink}
+        file={`${host}/vod/proxy/master.m3u8?url=${encodeURIComponent(
+          seriesLink
+        )}`}
         image={
           "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
         }
         privacy={true}
         customProps={{
+          primary: "html5", // Force HTML5 playback
+          hlshtml: true, // Enable native HLS
           skin: {
             name: "netflix",
           },
           preload: "auto", // Preload content to minimize buffering delays
-          bufferLength: 2, // Reduce buffer length for faster playback
+          // bufferLength: 2, // Reduce buffer length for faster playback
           adaptiveStreaming: true, // Enable dynamic bitrate adjustment
           // hlsjsConfig: {
           //   liveSyncDuration: 1,
