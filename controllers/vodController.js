@@ -3,6 +3,7 @@ const { headers } = require("../constants/data");
 
 const portal = process.env.portal;
 
+exports.proxyHttpStream = async (req, res, next) => {};
 exports.getCategories = async (req, res, next) => {
   const { token } = req.body;
   try {

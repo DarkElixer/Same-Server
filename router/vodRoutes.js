@@ -11,4 +11,6 @@ router
     vodController.getCategoriesItemSeasonsAndEpisodeLink
   );
 router.route("/search").post(vodController.getVodBySearch);
+
+router.route("/proxy").get(vodController.proxyHttpStream);
 module.exports = router;
