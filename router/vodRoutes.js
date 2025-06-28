@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const vodController = require("../controllers/vodController");
 
+console.log("some changed");
 router.route("/play").post(vodController.getVodStreamLink);
 router.route("/categories").post(vodController.getCategories);
 router
