@@ -5,7 +5,6 @@ import "../../styles/player.css";
 
 import ReactJwPlayer from "react-jw-player";
 import Loader from "../../ui/Loader";
-import { host } from "../../services/apiIptv";
 
 function SeriesJwPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
