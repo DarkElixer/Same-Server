@@ -1,0 +1,12 @@
+{
+  "proxy": {
+    "removeHeaders": [
+      "x-forwarded-for",
+      "x-forwarded-host",
+      "x-railway-edge",
+      "x-railway-request-id",
+      "x-real-ip",
+      "x-request-start"
+    ]
+  }
+}

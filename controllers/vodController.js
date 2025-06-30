@@ -41,12 +41,12 @@ exports.proxyHttpStream = async (req, res, next) => {
     let baseUrl = originalUrl.substring(0, lastIndex + 1);
     // Fetch the original m3u8 with axios
     let changedUrlToTrack = originalUrl.replace(
-      "video.m3u8",
+      "index.m3u8",
       "tracks-v1a1/mono.m3u8"
     );
     const response = await axios.get(changedUrlToTrack, {
       headers: req.headers,
-      // responseType: "text",
+      responseType: "text",
     });
 
     const m3u8Content = response.data;
