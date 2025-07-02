@@ -48,6 +48,7 @@ exports.proxyHttpStream = async (req, res, next) => {
       headers: req.headers,
       responseType: "text",
     });
+    console.log(response);
 
     const m3u8Content = response.data;
     const parser = new Parser();
