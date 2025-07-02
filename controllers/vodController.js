@@ -8,7 +8,6 @@ let lastIndex = -1;
 exports.proxySegment = async (req, res) => {
   try {
     const segmentUrl = decodeURIComponent(req.query.url);
-
     // Fetch the segment with axios using stream response
     const response = await axios.get(segmentUrl, {
       headers: req.headers,
@@ -45,10 +44,9 @@ exports.proxyHttpStream = async (req, res, next) => {
       "tracks-v1a1/mono.m3u8"
     );
     const response = await axios.get(changedUrlToTrack, {
-      headers: req.headers,
+      headers: { ...req.headers, Host: new URL(originalUrl).hostname },
       responseType: "text",
     });
-    console.log(response);
 
     const m3u8Content = response.data;
     const parser = new Parser();
