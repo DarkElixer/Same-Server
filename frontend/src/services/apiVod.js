@@ -1,11 +1,10 @@
 import { wait } from "../util/helper";
 import { getProfile, host } from "./apiIptv";
 
-
 // get item by search in vod
 export const getVodItemBySearch = async (type, query, page, attempt = 1) => {
   if (attempt >= 3) return;
-  const res = await fetch(`${host}/${type}/search?q=${query}&page=${page}`, {
+  const res = await fetch(`/${type}/search?q=${query}&page=${page}`, {
     method: "POST",
     body: JSON.stringify({ token: localStorage.token }),
     headers: {
@@ -34,7 +33,7 @@ export const getSeriesOrMovie = async (
 ) => {
   if (attempt >= 3) return;
   const res = await fetch(
-    `${host}/vod/categories/series?movieId=${movieId}&seasonId=${seasonId}&episodeId=${episodeId}&page=${page}&sort=${sortType}`,
+    `/vod/categories/series?movieId=${movieId}&seasonId=${seasonId}&episodeId=${episodeId}&page=${page}&sort=${sortType}`,
     {
       method: "POST",
       body: JSON.stringify({
@@ -64,7 +63,7 @@ export const getMovieLiveLink = async (movieId, attempt = 1) => {
   const movieData = await getSeriesOrMovie({ movieId });
   const episodeId = movieData.data[0].id;
   const res = await fetch(
-    `${host}/vod/play?episodeId=${episodeId}&seriesNumber=${0}`,
+    `/vod/play?episodeId=${episodeId}&seriesNumber=${0}`,
     {
       method: "POST",
       body: JSON.stringify({ token: localStorage.token }),
@@ -91,7 +90,7 @@ export const getSeriesLiveLink = async (
   const movieData = await getSeriesOrMovie({ movieId, seasonId, episodeId });
   const finalEpisodeId = movieData.data[0].id;
   const res = await fetch(
-    `${host}/vod/play?episodeId=${finalEpisodeId}&seriesNumber=${seriesNo}`,
+    `/vod/play?episodeId=${finalEpisodeId}&seriesNumber=${seriesNo}`,
     {
       method: "POST",
       body: JSON.stringify({ token: localStorage.token }),
