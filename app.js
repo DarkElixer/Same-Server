@@ -9,6 +9,7 @@ const authController = require("./controllers/authController");
 const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
+
 app.use(
   cors({
     origin: "*",

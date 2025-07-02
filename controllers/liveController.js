@@ -10,7 +10,6 @@ exports.getLiveStream = async (req, res, next) => {
     const response = await axios(streamUrl, {
       headers: {
         ...headers,
-        "X-Forwarded-For": req.ip,
         Authorization: `Bearer ${token}`,
       },
     });
@@ -30,7 +29,6 @@ exports.getCategories = async (req, res, next) => {
     const response = await axios(request, {
       headers: {
         ...headers,
-        "X-Forwarded-For": req.ip,
         Authorization: `Bearer ${token}`,
       },
     });
@@ -70,7 +68,6 @@ exports.getCategoriesChannel = async (req, res, next) => {
     const response = await axios(request, {
       headers: {
         ...headers,
-        "X-Forwarded-For": req.ip,
         Authorization: `Bearer ${token}`,
       },
     });

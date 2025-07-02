@@ -1,16 +1,16 @@
 import { wait } from "../util/helper";
 
-export const host = "https://same-server-production.up.railway.app";
+// export const host = "https://same-server-production.up.railway.app";
 // export const host = "http://localhost:3152";
 
 export const generateToken = async () => {
-  const res = await fetch(`${host}/authenticate`);
+  const res = await fetch(`/authenticate`);
   const data = res.json();
   return data;
 };
 
 export const getProfile = async () => {
-  const res = await fetch(`${host}/profile`, {
+  const res = await fetch(`/profile`, {
     method: "POST",
     body: JSON.stringify({ token: localStorage.token }),
     headers: {
@@ -23,7 +23,7 @@ export const getProfile = async () => {
 
 export const getAllCategories = async (type, attempt = 1) => {
   if (attempt >= 3) return;
-  const res = await fetch(`${host}/${type}/categories`, {
+  const res = await fetch(`/${type}/categories`, {
     method: "POST",
     body: JSON.stringify({ token: localStorage.token }),
     headers: {
@@ -46,16 +46,13 @@ export const getAllCategoriesChannel = async (
   attempt = 1
 ) => {
   if (attempt >= 3) return;
-  const res = await fetch(
-    `${host}/${type}/categories/${categoryId}?page=${page}`,
-    {
-      method: "POST",
-      body: JSON.stringify({ token: localStorage.token }),
-      headers: {
-        "Content-type": "application/json",
-      },
-    }
-  );
+  const res = await fetch(`/${type}/categories/${categoryId}?page=${page}`, {
+    method: "POST",
+    body: JSON.stringify({ token: localStorage.token }),
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
   const { data, status } = await res.json();
   if (
     status === "fail" ||

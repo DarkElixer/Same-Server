@@ -12,10 +12,7 @@ exports.performHandshake = async (req, res, next) => {
   try {
     const handshakeUrl = `http://${portal}/stalker_portal/server/load.php?type=stb&action=handshake&prehash=false&JsHttpRequest=1-xml`;
     const response = await axios(handshakeUrl, {
-      headers: {
-        ...headers,
-        "X-Forwarded-For": req.ip,
-      },
+      headers: headers,
     });
     res.status(200).json({
       status: "success",
@@ -36,7 +33,6 @@ exports.getProfileDetails = async (req, res, next) => {
     await axios(profileUrl, {
       headers: {
         ...headers,
-        "X-Forwarded-For": req.ip,
         Authorization: `Bearer ${token}`,
       },
     });
