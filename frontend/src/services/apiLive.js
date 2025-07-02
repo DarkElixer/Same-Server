@@ -1,9 +1,9 @@
 import { wait } from "../util/helper";
-import { getProfile, host } from "./apiIptv";
+import { getProfile } from "./apiIptv";
 
 export const getLiveChannelLink = async (cmd, attempt = 1) => {
   if (attempt >= 3) return;
-  const res = await fetch(`${host}/live/play`, {
+  const res = await fetch(`/live/play`, {
     method: "POST",
     body: JSON.stringify({
       cmd,
@@ -11,7 +11,6 @@ export const getLiveChannelLink = async (cmd, attempt = 1) => {
     }),
     headers: {
       "Content-type": "application/json",
-      Referer: "http://jiotv.be/stalker_portal/c/",
     },
   });
   const data = await res.json();
