@@ -43,12 +43,15 @@ exports.proxyHttpStream = async (req, res, next) => {
       "index.m3u8",
       "tracks-v1a1/mono.m3u8"
     );
-    const response = await axios.get(changedUrlToTrack, {
+    // const response = await axios.get(changedUrlToTrack, {
+    //   headers: { ...req.headers, Host: new URL(originalUrl).hostname },
+    //   responseType: "text",
+    // });
+    const response = await fetch(changedUrlToTrack, {
       headers: { ...req.headers, Host: new URL(originalUrl).hostname },
-      responseType: "text",
     });
-
-    const m3u8Content = response.data;
+    const data = await response.text();
+    const m3u8Content = data;
     const parser = new Parser();
 
     parser.push(m3u8Content);
