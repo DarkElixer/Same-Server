@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import ReactJwPlayer from "react-jw-player";
 import Loader from "../../ui/Loader";
-import { host } from "../../services/apiIptv";
 
 function VodJwPlayer() {
   const { movieName } = useParams();
@@ -20,9 +19,7 @@ function VodJwPlayer() {
       <ReactJwPlayer
         playerId="my-unique-id"
         playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
-        file={`${host}/vod/proxy/master.m3u8?url=${encodeURIComponent(
-          movieLink
-        )}`}
+        file={`/vod/proxy/master.m3u8?url=${encodeURIComponent(movieLink)}`}
         privacy={true}
         image={
           "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
