@@ -1,5 +1,6 @@
 {
   "proxy": {
+    "trustProxy": true,
     "removeHeaders": [
       "x-forwarded-for",
       "x-forwarded-host",
