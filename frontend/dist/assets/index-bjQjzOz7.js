@@ -157,7 +157,7 @@ Please change the parent <Route path="${Q}"> to <Route path="${Q==="/"?"*":`${Q}
     -webkit-line-clamp: 2;
   }
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-`,Il="https://jiotv.be";function Nu(){return j.jsx("div",{className:"loader"})}const ow=iw`
+`,Il="https://tv.stream4k.cc";function Nu(){return j.jsx("div",{className:"loader"})}const ow=iw`
      0%,
     100% {
       box-shadow: .2em 0px 0 0px currentcolor;
