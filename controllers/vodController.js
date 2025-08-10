@@ -43,10 +43,7 @@ exports.proxyHttpStream = async (req, res, next) => {
       "index.m3u8",
       "tracks-v1a1/mono.m3u8"
     );
-    // const response = await axios.get(changedUrlToTrack, {
-    //   headers: { ...req.headers, Host: new URL(originalUrl).hostname },
-    //   responseType: "text",
-    // });
+
     const response = await fetch(changedUrlToTrack, {
       headers: { ...req.headers, Host: new URL(originalUrl).hostname },
     });
@@ -135,7 +132,7 @@ exports.getCategoriesItem = async (req, res, next) => {
   const { page = 1, movieId } = req.query;
   if (movieId) return next();
   try {
-    const request = `http://${portal}/stalker_portal/server/load.php?type=vod&action=get_ordered_list&category=${id}&sortby=added&genre=*&p=${page}&sortby=added&JsHttpRequest=1-xml`;
+    const request = `http://${portal}/stalker_portal/server/load.php?type=vod&action=get_ordered_list&category=${id}&sortby=added&genre=*&p=${page}&JsHttpRequest=1-xml`;
     const response = await axios(request, {
       headers: {
         ...headers,
