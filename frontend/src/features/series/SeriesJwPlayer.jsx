@@ -45,19 +45,6 @@ function SeriesJwPlayer() {
             name: "netflix",
           },
           preload: "auto", // Preload content to minimize buffering delays
-          // bufferLength: 2, // Reduce buffer length for faster playback
-          adaptiveStreaming: true, // Enable dynamic bitrate adjustment
-          // hlsjsConfig: {
-          //   liveSyncDuration: 1,
-          //   maxLoadingDelay: 2,
-          //   minAutoBitrate: 0,
-          //   lowLatencyMode: true,
-          //   subtitlePreference: {
-          //     lang: "en-US",
-          //   },
-          //   maxBufferHole: 5, // Start fetching next segment when 3s are left
-          //   maxBufferLength: 12, // Keep 2 full segments (6s * 2)
-          // }, // Optimize HLS streaming for minimal latency
           hlsjsConfig: {
             maxLoadingDelay: 2,
             minAutoBitrate: 0,
@@ -65,10 +52,9 @@ function SeriesJwPlayer() {
             subtitlePreference: {
               lang: "en-US",
             },
-            maxBufferHole: 5, // Start fetching next segment when 3s are left
+            maxBufferHole: 3, // Start fetching next segment when 3s are left
             maxBufferLength: 12, // Keep 2 full segments (6s * 2)
           },
-          startparam: "starttime", // Ensure fast start for VOD playback
         }}
       />
     </div>
