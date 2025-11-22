@@ -18,7 +18,7 @@ import Group from "../../ui/Group";
 function SeriesSeasonEpisodesList() {
   const total_items = useRef(0);
   const { seriesName, seasonNo } = useParams();
-  const [sort, setSort] = useState("name-desc");
+  const [sort, setSort] = useState("name-asc");
   const [selectedEpisodeRange, setSelectedEpisodeRange] = useState({
     start: 1,
     end: Infinity,
