@@ -18,7 +18,7 @@ function JWPlayer() {
       <ReactJwPlayer
         playerId="my-unique-id"
         playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
-        file={channelLink}
+        file={`/live/proxy/master.m3u8?url=${encodeURIComponent(channelLink)}`}
         privacy={true}
         image={
           "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
