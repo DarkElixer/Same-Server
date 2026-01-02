@@ -23,8 +23,19 @@ function useInfiniteSeriesScrolling(
       staleTime: Infinity,
       initialPageParam: initPage,
       getNextPageParam: (lastPage, allPages, lastPageParam) => {
-        endPage =
-          endPage === Infinity ? Math.ceil(lastPage.total_items / 14) : endPage;
+        // Use actual episode count from series array if available
+        // The series array contains the actual episode numbers that exist
+        const seriesArray = lastPage?.data?.[0]?.series;
+        const actualEpisodeCount = seriesArray?.length || 0;
+
+        // Calculate total pages based on actual episode count (14 per page)
+        const totalPages =
+          actualEpisodeCount > 0
+            ? Math.ceil(actualEpisodeCount / 14)
+            : Math.ceil(lastPage.total_items / 14);
+
+        endPage = endPage === Infinity ? totalPages : endPage;
+
         if (lastPageParam >= endPage) return undefined;
         return lastPageParam + 1;
       },

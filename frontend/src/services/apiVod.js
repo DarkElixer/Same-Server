@@ -33,7 +33,7 @@ export const getSeriesOrMovie = async (
 ) => {
   if (attempt >= 3) return;
   const res = await fetch(
-    `/vod/categories/series?movieId=${movieId}&seasonId=${seasonId}&episodeId=${episodeId}&page=${page}&sort=${sortType}`,
+    `/vod/categories/series?movieId=${movieId}&seasonId=${seasonId}&episodeId=${episodeId}&page=${page}&sort=${sortType}&limit=${total_items}`,
     {
       method: "POST",
       body: JSON.stringify({

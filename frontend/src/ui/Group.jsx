@@ -25,42 +25,87 @@ const StyledGroup = styled.div`
   }
 `;
 
-function Group({ setSelectedEpisodeRange, data }) {
+function Group({ setSelectedEpisodeRange, data, sort }) {
+  // Get series array - contains actual episode numbers that exist, sorted descending (newest first)
   const epi_arr = data.pages[0].data[0].series;
-  const last_epi = epi_arr[0];
-  const first_epi = epi_arr[epi_arr.length - 1];
+  const actualEpisodeCount = epi_arr.length;
+
+  // Calculate total pages based on actual episode count (14 per page)
+  const totalPages = Math.ceil(actualEpisodeCount / 14);
+
+  // 14 episodes per group (1 page per group)
+  const episodesPerGroup = 14;
+  const numGroups = Math.ceil(actualEpisodeCount / episodesPerGroup);
+
+  // For display, always show ranges in ascending order (e.g., "1 - 14", "15 - 28")
+  // episodes are strings, convert to numbers and sort ascending
+  const sortedEpisodesAsc = [...epi_arr].map(Number).sort((a, b) => a - b);
 
   return (
     <StyledGroup>
-      {Array(Math.ceil((last_epi - first_epi) / 140))
+      {Array(numGroups)
         .fill(0)
-        .map((epi, idx) => (
-          <EpisodeRange
-            key={idx}
-            start={+first_epi + 140 * idx}
-            setSelectedEpisodeRange={setSelectedEpisodeRange}
-            end={
-              last_epi >= +first_epi + 140 * (idx + 1) - 1
-                ? +first_epi + 140 * (idx + 1) - 1
-                : last_epi
-            }
-            groupNo={idx + 1}
-          />
-        ))}
+        .map((_, idx) => {
+          // Calculate episode indices for this group (in ascending order for display)
+          const startIdx = idx * episodesPerGroup;
+          const endIdx = Math.min(
+            (idx + 1) * episodesPerGroup - 1,
+            actualEpisodeCount - 1
+          );
+
+          // Get episode numbers for display
+          const startEpisode = sortedEpisodesAsc[startIdx];
+          const endEpisode = sortedEpisodesAsc[endIdx];
+
+          return (
+            <EpisodeRange
+              key={idx}
+              displayStart={startEpisode}
+              displayEnd={endEpisode}
+              groupNo={idx + 1}
+              numGroups={numGroups}
+              totalPages={totalPages}
+              sort={sort}
+              setSelectedEpisodeRange={setSelectedEpisodeRange}
+            />
+          );
+        })}
     </StyledGroup>
   );
 }
 
-function EpisodeRange({ start, end, groupNo, setSelectedEpisodeRange }) {
+function EpisodeRange({
+  displayStart,
+  displayEnd,
+  groupNo,
+  numGroups,
+  totalPages,
+  sort,
+  setSelectedEpisodeRange,
+}) {
   function handleClick() {
-    const startPage = 10 * (groupNo - 1) + 1;
-    const endPage = startPage + Math.floor((end - start) / 14);
-    setSelectedEpisodeRange({ start: startPage, end: endPage });
+    let pageNo;
+
+    if (sort === "name-asc") {
+      // For ascending sort (oldest first):
+      // Group 1 (episodes 1-14) = page 1
+      pageNo = groupNo;
+    } else {
+      // For descending sort (newest first):
+      // Group 1 (episodes 1-14) = oldest episodes = last page from API
+      // We need to invert the group selection
+      pageNo = numGroups - groupNo + 1;
+    }
+
+    // Each group is exactly 1 page
+    setSelectedEpisodeRange({ start: pageNo, end: pageNo });
   }
+
   return (
     <span onClick={handleClick}>
-      {start} - {end}
+      {displayStart} - {displayEnd}
     </span>
   );
 }
+
 export default Group;

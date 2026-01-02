@@ -67,6 +67,7 @@ function SeriesSeasonEpisodesList() {
           <Group
             setSelectedEpisodeRange={setSelectedEpisodeRange}
             data={data}
+            sort={sort}
           />
         )}
       </div>

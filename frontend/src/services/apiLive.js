@@ -11,7 +11,7 @@ export const getLiveChannelLink = async (cmd, attempt = 1) => {
     }),
     headers: {
       "Content-type": "application/json",
-      Referer: "http://jiotv.be/stalker_portal/c/",
+      Referer: "http://tv.stream4k.cc/stalker_portal/c/",
     },
   });
   const data = await res.json();

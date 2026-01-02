@@ -1,3 +1,3 @@
-const portal = "https://jiotv.be";
+const portal = "https://tv.stream4k.cc";
 
 export { portal };
