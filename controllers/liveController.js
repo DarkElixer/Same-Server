@@ -31,7 +31,7 @@ exports.proxySegment = async (req, res) => {
 exports.proxyMasterPlaylist = async (req, res) => {
   try {
     const originalUrl = decodeURIComponent(req.query.url);
-    
+
     // Find base URL
     let lastIndex = originalUrl.lastIndexOf("/");
     const baseUrl = originalUrl.substring(0, lastIndex + 1);
@@ -59,7 +59,9 @@ exports.proxyMasterPlaylist = async (req, res) => {
             : new URL(line, baseUrl).href;
 
           // Point to our track playlist proxy endpoint
-          return `/live/proxy/track.m3u8?url=${encodeURIComponent(playlistUrl)}`;
+          return `/live/proxy/track.m3u8?url=${encodeURIComponent(
+            playlistUrl
+          )}`;
         }
         return line;
       })
@@ -77,7 +79,7 @@ exports.proxyMasterPlaylist = async (req, res) => {
 exports.proxyTrackPlaylist = async (req, res) => {
   try {
     const originalUrl = decodeURIComponent(req.query.url);
-    
+
     // Find base URL
     let lastIndex = originalUrl.lastIndexOf("/");
     const baseUrl = originalUrl.substring(0, lastIndex + 1);
