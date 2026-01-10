@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 
@@ -28,6 +28,7 @@ function useInfiniteSeriesScrolling(
         if (lastPageParam >= endPage) return undefined;
         return lastPageParam + 1;
       },
+      placeholderData: keepPreviousData,
     });
   useEffect(() => {
     if (inView && hasNextPage) {

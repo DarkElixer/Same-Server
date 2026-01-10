@@ -69,6 +69,18 @@ a,a:link{
     justify-content: space-between;
     align-items: center;
 }
+
+@media (max-width: 768px) {
+    .top{
+        flex-direction: column;
+        margin-top: 5px;
+        align-items: start;
+
+        & > {
+        flex: 1;
+        }
+    }
+}
 #nothing__found{
  object-fit: cover;
  /* width: 100%; */

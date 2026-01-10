@@ -8,6 +8,7 @@ import "../../styles/player_overlay.css";
 
 import ReactJwPlayer from "react-jw-player";
 import Loader from "../../ui/Loader";
+import CompactEpisodeList from "./CompactEpisodeList";
 
 function SeriesJwPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
@@ -16,18 +17,18 @@ function SeriesJwPlayer() {
   const [countdown, setCountdown] = useState(10);
   const [playerElement, setPlayerElement] = useState(null);
   const timerRef = useRef(null);
+  const inactivityTimerRef = useRef(null);
 
   const navigate = useNavigate();
 
-  const seriesIdFromURL = seriesName.split("-").pop();
+  const seriesArray = seriesName.split("-");
+  const seriesIdFromURL = seriesArray.pop();
+  const screenshotsId = seriesArray.pop();
+  const displaySeriesName = seriesArray.join(" ").replace(/%20/g, " ");
+
   const seasonIdFromURL = seasonNo.split("-").pop();
   const episodeIdFromURL = episodeNo.split("-").pop();
   const seriesNoFromURL = episodeNo.split("-")[1];
-
-  // Extract series name and episode info for display
-  const seriesArray = seriesName.split("-");
-  seriesArray.pop(); // Remove ID
-  const displaySeriesName = seriesArray.join(" ").replace(/%20/g, " ");
 
   const seasonArray = seasonNo.split("-");
   seasonArray.pop(); // Remove ID
@@ -174,8 +175,17 @@ function SeriesJwPlayer() {
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
     };
   }, []);
+
+  const handleMouseMove = () => {
+    setShowInfo(true);
+    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+    inactivityTimerRef.current = setTimeout(() => {
+      setShowInfo(false);
+    }, 3000);
+  };
 
   if (isLoading) return <Loader />;
 
@@ -259,45 +269,57 @@ function SeriesJwPlayer() {
   };
 
   return (
-    <div
-      className="player-wrapper"
-      onMouseEnter={() => setShowInfo(true)}
-      onMouseLeave={() => setShowInfo(false)}
-    >
-      <div className="player">
-        <ReactJwPlayer
-          playerId="my-unique-id"
-          playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
-          file={`/vod/proxy/master.m3u8?url=${encodeURIComponent(seriesLink)}`}
-          image={
-            "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
-          }
-          onComplete={handleVideoComplete}
-          onPlay={() => setIsAutoPlayActive(false)}
-          onReady={handlePlayerReady}
-          privacy={true}
-          customProps={{
-            primary: "html5",
-            hlshtml: true,
-            skin: {
-              name: "netflix",
-            },
-            preload: "auto",
-            hlsjsConfig: {
-              maxLoadingDelay: 2,
-              minAutoBitrate: 0,
-              lowLatencyMode: true,
-              subtitlePreference: {
-                lang: "en-US",
+    <div className="player-page-container">
+      <div
+        className="player-wrapper"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setShowInfo(false)}
+      >
+        <div className="player">
+          <ReactJwPlayer
+            playerId="my-unique-id"
+            playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
+            file={`/vod/proxy/master.m3u8?url=${encodeURIComponent(
+              seriesLink
+            )}`}
+            image={
+              "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
+            }
+            onComplete={handleVideoComplete}
+            onPlay={() => setIsAutoPlayActive(false)}
+            onReady={handlePlayerReady}
+            privacy={true}
+            customProps={{
+              primary: "html5",
+              hlshtml: true,
+              skin: {
+                name: "netflix",
               },
-              maxBufferHole: 3,
-              maxBufferLength: 12,
-            },
-          }}
-        />
+              preload: "auto",
+              hlsjsConfig: {
+                maxLoadingDelay: 2,
+                minAutoBitrate: 0,
+                lowLatencyMode: true,
+                subtitlePreference: {
+                  lang: "en-US",
+                },
+                maxBufferHole: 3,
+                maxBufferLength: 12,
+              },
+            }}
+          />
+        </div>
+
+        {renderOverlays()}
       </div>
 
-      {renderOverlays()}
+      <CompactEpisodeList
+        episodes={seasonData?.data}
+        currentEpisodeId={episodeIdFromURL}
+        seriesName={seriesName}
+        seasonNo={seasonNo}
+        screenshotsId={screenshotsId}
+      />
     </div>
   );
 }

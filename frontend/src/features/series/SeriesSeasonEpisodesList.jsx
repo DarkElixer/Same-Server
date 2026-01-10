@@ -15,10 +15,12 @@ import Loader from "../../ui/Loader";
 import Image from "../../ui/Image";
 import Group from "../../ui/Group";
 
+import GroupSkeleton from "../../ui/GroupSkeleton";
+
 function SeriesSeasonEpisodesList() {
   const total_items = useRef(0);
   const { seriesName, seasonNo } = useParams();
-  const [sort, setSort] = useState("name-asc");
+  const [sort, setSort] = useState("name-desc");
   const [selectedEpisodeRange, setSelectedEpisodeRange] = useState({
     start: 1,
     end: Infinity,
@@ -30,18 +32,24 @@ function SeriesSeasonEpisodesList() {
   const screenshotsId = seriesArray[seriesArray.length - 2];
   seriesArray.pop();
   const seriesNameAfter = seriesArray.join("-");
-  const { ref, data, isFetchingNextPage, status, hasNextPage } =
-    useInfiniteSeriesScrolling(
-      "series",
-      {
-        movieId: seriesIdFromURL,
-        seasonId: seasonNoFromURL,
-        total_items: total_items.current,
-      },
-      getSeriesOrMovie,
-      { sort, selectedEpisodeRange }
-    );
-  if (status !== "pending") {
+  const {
+    ref,
+    data,
+    isFetchingNextPage,
+    status,
+    hasNextPage,
+    isPlaceholderData,
+  } = useInfiniteSeriesScrolling(
+    "series",
+    {
+      movieId: seriesIdFromURL,
+      seasonId: seasonNoFromURL,
+      total_items: total_items.current,
+    },
+    getSeriesOrMovie,
+    { sort, selectedEpisodeRange }
+  );
+  if (status !== "pending" && !isPlaceholderData) {
     total_items.current = data.pages[0].data[0].series.length ?? 0;
   }
   const categoryName =
@@ -56,6 +64,7 @@ function SeriesSeasonEpisodesList() {
           <StyledSelect
             onChange={(e) => {
               setSort(e.target.value);
+              setSelectedEpisodeRange({ start: 1, end: Infinity });
             }}
             value={sort}
           >
@@ -63,14 +72,21 @@ function SeriesSeasonEpisodesList() {
             <option value="name-asc">Sort By Episode Number</option>
           </StyledSelect>
         </div>
-        {status !== "pending" && status !== "error" && (
-          <Group
-            setSelectedEpisodeRange={setSelectedEpisodeRange}
-            data={data}
-          />
+        {status === "pending" && !data ? (
+          <GroupSkeleton />
+        ) : (
+          status !== "error" && (
+            <Group
+              setSelectedEpisodeRange={setSelectedEpisodeRange}
+              selectedEpisodeRange={selectedEpisodeRange}
+              data={data}
+            />
+          )
         )}
       </div>
-      {status !== "pending" && status !== "error" ? (
+      {status === "pending" && !data ? (
+        <Loader />
+      ) : status !== "error" ? (
         <GridBox>
           {data.pages.map((group, i) => (
             <Fragment key={i}>

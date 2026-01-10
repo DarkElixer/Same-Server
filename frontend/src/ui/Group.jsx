@@ -4,7 +4,6 @@ const StyledGroup = styled.div`
   display: flex;
   gap: 1rem;
   margin: 0 2rem;
-  padding: 0 1rem;
   overflow: scroll;
 
   &::-webkit-scrollbar {
@@ -18,47 +17,71 @@ const StyledGroup = styled.div`
     flex: 0 0 fit-content;
     transition: background 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95);
     &:hover {
-      background-color: #fb1;
+      background-color: #bbcc;
       cursor: pointer;
       color: black;
     }
   }
 `;
 
-function Group({ setSelectedEpisodeRange, data }) {
+function Group({ setSelectedEpisodeRange, selectedEpisodeRange, data }) {
   const epi_arr = data.pages[0].data[0].series;
-  const last_epi = epi_arr[0];
-  const first_epi = epi_arr[epi_arr.length - 1];
+  if (!epi_arr || epi_arr.length === 0) return null;
+
+  const pageSize = 14;
+  const groupsCount = Math.ceil(epi_arr.length / pageSize);
+
+  // Determine which group is active
+  // If start is 1 and end is Infinity, we are viewing everything starting from page 1, so highlight group 1
+  const activePage = selectedEpisodeRange.start;
 
   return (
     <StyledGroup>
-      {Array(Math.ceil((last_epi - first_epi) / 140))
-        .fill(0)
-        .map((epi, idx) => (
+      {Array.from({ length: groupsCount }, (_, idx) => {
+        const startIdx = idx * pageSize;
+        const endIdx = Math.min((idx + 1) * pageSize - 1, epi_arr.length - 1);
+
+        const firstInGroup = epi_arr[startIdx];
+        const lastInGroup = epi_arr[endIdx];
+
+        const startLabel = Math.min(firstInGroup, lastInGroup);
+        const endLabel = Math.max(firstInGroup, lastInGroup);
+
+        const isSelected = activePage === idx + 1;
+
+        return (
           <EpisodeRange
             key={idx}
-            start={+first_epi + 140 * idx}
+            start={startLabel}
+            end={endLabel}
             setSelectedEpisodeRange={setSelectedEpisodeRange}
-            end={
-              last_epi >= +first_epi + 140 * (idx + 1) - 1
-                ? +first_epi + 140 * (idx + 1) - 1
-                : last_epi
-            }
             groupNo={idx + 1}
+            isSelected={isSelected}
           />
-        ))}
+        );
+      })}
     </StyledGroup>
   );
 }
 
-function EpisodeRange({ start, end, groupNo, setSelectedEpisodeRange }) {
+function EpisodeRange({
+  start,
+  end,
+  groupNo,
+  setSelectedEpisodeRange,
+  isSelected,
+}) {
   function handleClick() {
-    const startPage = 10 * (groupNo - 1) + 1;
-    const endPage = startPage + Math.floor((end - start) / 14);
-    setSelectedEpisodeRange({ start: startPage, end: endPage });
+    setSelectedEpisodeRange({ start: groupNo, end: groupNo });
   }
   return (
-    <span onClick={handleClick}>
+    <span
+      style={{
+        backgroundColor: isSelected ? "#fb2" : "transparent",
+        color: isSelected ? "black" : "inherit",
+      }}
+      onClick={handleClick}
+    >
       {start} - {end}
     </span>
   );
