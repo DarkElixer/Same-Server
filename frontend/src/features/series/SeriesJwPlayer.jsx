@@ -18,6 +18,10 @@ function SeriesJwPlayer() {
   const [playerElement, setPlayerElement] = useState(null);
   const timerRef = useRef(null);
   const inactivityTimerRef = useRef(null);
+  const [selectedEpisodeRange, setSelectedEpisodeRange] = useState({
+    start: 1,
+    end: 1,
+  });
 
   const navigate = useNavigate();
 
@@ -63,6 +67,43 @@ function SeriesJwPlayer() {
         sortType: "name-desc",
         page: 1,
       }),
+    staleTime: Infinity,
+  });
+
+  // Calculate initial page based on current episode
+  useEffect(() => {
+    if (seasonData?.data?.[0]?.series) {
+      const allSeriesNumbers = seasonData.data[0].series;
+      const currentIndex = allSeriesNumbers.findIndex(
+        (num) => String(num) === String(seriesNoFromURL)
+      );
+
+      if (currentIndex !== -1) {
+        const initialPage = Math.floor(currentIndex / 14) + 1;
+        setSelectedEpisodeRange({ start: initialPage, end: initialPage });
+      }
+    }
+  }, [seasonData, seriesNoFromURL]);
+
+  // Fetch episodes for the current selected page
+  const { data: currentPageData, isLoading: isPageLoading } = useQuery({
+    queryKey: [
+      "currentPageEpisodes",
+      {
+        seriesIdFromURL,
+        seasonIdFromURL,
+        page: selectedEpisodeRange.start,
+      },
+    ],
+    queryFn: () =>
+      getSeriesOrMovie({
+        movieId: seriesIdFromURL,
+        seasonId: seasonIdFromURL,
+        page: selectedEpisodeRange.start,
+        total_items: 14,
+        sortType: "name-desc",
+      }),
+    enabled: !!selectedEpisodeRange.start,
     staleTime: Infinity,
   });
 
@@ -314,11 +355,15 @@ function SeriesJwPlayer() {
       </div>
 
       <CompactEpisodeList
-        episodes={seasonData?.data}
+        episodes={currentPageData?.data}
         currentEpisodeId={episodeIdFromURL}
         seriesName={seriesName}
         seasonNo={seasonNo}
         screenshotsId={screenshotsId}
+        allSeasonData={seasonData}
+        selectedEpisodeRange={selectedEpisodeRange}
+        setSelectedEpisodeRange={setSelectedEpisodeRange}
+        isPageLoading={isPageLoading}
       />
     </div>
   );

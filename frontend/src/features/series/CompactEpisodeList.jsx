@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { portal } from "../../constants/servicesConstants";
 import { preLen } from "../../util/helper";
 import Image from "../../ui/Image";
+import Group from "../../ui/Group";
+import MiniLoader from "../../ui/MiniLoader";
 
 function CompactEpisodeList({
   episodes,
@@ -9,6 +11,10 @@ function CompactEpisodeList({
   seriesName,
   seasonNo,
   screenshotsId,
+  allSeasonData,
+  selectedEpisodeRange,
+  setSelectedEpisodeRange,
+  isPageLoading,
 }) {
   const navigate = useNavigate();
 
@@ -16,7 +22,21 @@ function CompactEpisodeList({
 
   return (
     <div className="compact-episode-list-container">
-      <h3 className="compact-list-title">Episodes</h3>
+      <div className="compact-list-header">
+        <h3 className="compact-list-title">Episodes</h3>
+        {isPageLoading && <MiniLoader />}
+      </div>
+
+      {allSeasonData && (
+        <div className="compact-pagination">
+          <Group
+            data={{ pages: [{ data: allSeasonData.data }] }}
+            selectedEpisodeRange={selectedEpisodeRange}
+            setSelectedEpisodeRange={setSelectedEpisodeRange}
+          />
+        </div>
+      )}
+
       <div className="compact-episode-grid">
         {episodes.map((episode) => {
           const isCurrent = String(episode.id) === String(currentEpisodeId);

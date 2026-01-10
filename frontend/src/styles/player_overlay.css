@@ -275,12 +275,36 @@
   display: none; /* Hide by default on desktop */
 }
 
+.compact-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .compact-list-title {
   color: #fff;
   font-family: "Rubik", Arial, sans-serif;
   font-size: 1.2rem;
-  margin-bottom: 1rem;
+  margin: 0;
   font-weight: 600;
+}
+
+.compact-pagination {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* Override Group styles for compact view */
+.compact-pagination > div {
+  margin: 0 !important; /* Remove external margins */
+  padding: 0.5rem 0;
+}
+
+.compact-pagination span {
+  font-size: 0.85rem !important;
+  padding: 0.2rem 0.8rem !important;
 }
 
 .compact-episode-grid {
