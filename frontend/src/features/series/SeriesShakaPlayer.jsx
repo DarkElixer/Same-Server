@@ -1,19 +1,21 @@
 import { getSeriesLiveLink, getSeriesOrMovie } from "../../services/apiVod";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import "../../styles/player.css";
 import "../../styles/player_overlay.css";
 
-import ReactJwPlayer from "react-jw-player";
+import ShakaPlayer from "../../ui/ShakaPlayer";
 import Loader from "../../ui/Loader";
 import CompactEpisodeList from "./CompactEpisodeList";
 
-function SeriesJwPlayer() {
+function SeriesShakaPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
   const [showInfo, setShowInfo] = useState(false);
   const [isAutoPlayActive, setIsAutoPlayActive] = useState(false);
+  const [showNextUpPrompt, setShowNextUpPrompt] = useState(false);
+  const [promptCountdown, setPromptCountdown] = useState(10);
   const [countdown, setCountdown] = useState(10);
   const [playerElement, setPlayerElement] = useState(null);
   const timerRef = useRef(null);
@@ -163,21 +165,26 @@ function SeriesJwPlayer() {
     );
 
     if (episode) {
-      return { id: episode.id, number: episode.series_number };
+      return {
+        id: episode.id,
+        number: episode.series_number,
+        title: episode.name,
+        thumb: episode.stream_icon,
+      };
     }
     return null;
   })();
 
-  const handleNextEpisode = () => {
+  const handleNextEpisode = useCallback(() => {
     if (nextEpisode) {
       const nextEpisodeUrl = `/series/${seriesName}/${seasonNo}/play/episode-${nextEpisode.number}-${nextEpisode.id}`;
-      navigate(nextEpisodeUrl);
+      navigate(nextEpisodeUrl, { replace: true });
       // Reset state for new episode
       setIsAutoPlayActive(false);
       setCountdown(10);
       if (timerRef.current) clearInterval(timerRef.current);
     }
-  };
+  }, [nextEpisode, seriesName, seasonNo, navigate]);
 
   const handleCancelAutoPlay = () => {
     setIsAutoPlayActive(false);
@@ -185,7 +192,10 @@ function SeriesJwPlayer() {
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
-  const handleVideoComplete = () => {
+  const handleVideoComplete = useCallback(() => {
+    // Hide the prompt if it was showing
+    setShowNextUpPrompt(false);
+
     if (nextEpisode) {
       setIsAutoPlayActive(true);
       setCountdown(10);
@@ -203,15 +213,58 @@ function SeriesJwPlayer() {
         });
       }, 1000);
     }
-  };
+  }, [nextEpisode, handleNextEpisode]);
 
-  const handlePlayerReady = () => {
+  const handleOnPlay = useCallback(() => {
+    setIsAutoPlayActive(false);
+    setShowNextUpPrompt(false);
+    setPromptCountdown(10);
+    if (timerRef.current) clearInterval(timerRef.current);
+  }, []);
+
+  const handleTimeUpdate = useCallback(
+    ({ currentTime, duration }) => {
+      if (!nextEpisode || isAutoPlayActive) return;
+
+      const remainingTime = Math.floor(duration - currentTime);
+
+      // Trigger prompt at exactly 10 seconds remaining
+      if (remainingTime > 0 && remainingTime <= 10) {
+        if (!showNextUpPrompt) {
+          setShowNextUpPrompt(true);
+          setPromptCountdown(remainingTime);
+
+          // Start a persistent 1s interval for the countdown
+          if (timerRef.current) clearInterval(timerRef.current);
+          timerRef.current = setInterval(() => {
+            setPromptCountdown((prev) => {
+              if (prev <= 1) {
+                clearInterval(timerRef.current);
+                handleNextEpisode();
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        }
+      } else if (remainingTime > 10 || remainingTime < 0) {
+        // Hide if we seek far back or if video restarts
+        if (showNextUpPrompt) {
+          setShowNextUpPrompt(false);
+          if (timerRef.current) clearInterval(timerRef.current);
+        }
+      }
+    },
+    [nextEpisode, isAutoPlayActive, showNextUpPrompt, handleNextEpisode]
+  );
+
+  const handlePlayerReady = useCallback(() => {
     // Locate the specific player DOM element to mount the portal
     const playerNode = document.getElementById("my-unique-id");
     if (playerNode) {
       setPlayerElement(playerNode);
     }
-  };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -239,7 +292,7 @@ function SeriesJwPlayer() {
         {/* Episode Info Overlay */}
         <div
           className={`episode-info-overlay ${
-            showInfo && !isAutoPlayActive ? "show" : ""
+            showInfo ? "show" : ""
           }`}
         >
           <div className="episode-info-header">
@@ -304,6 +357,58 @@ function SeriesJwPlayer() {
             </div>
           </div>
         )}
+
+        {/* Next Up Prompt with Autoplay Timer */}
+        {showNextUpPrompt && nextEpisode && !isAutoPlayActive && (
+          <div className="next-up-prompt">
+            <div className="next-up-card" onClick={handleNextEpisode}>
+              <div className="next-up-thumb">
+                {nextEpisode.thumb ? (
+                  <img src={nextEpisode.thumb} alt="" />
+                ) : (
+                  <div className="next-up-thumb-placeholder">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                )}
+                
+                {/* Visual Progress Ring */}
+                <div className="next-up-timer-ring">
+                  <svg viewBox="0 0 36 36">
+                    <path
+                      className="next-up-ring-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      className="next-up-ring-progress"
+                      strokeDasharray={`${(promptCountdown / 10) * 100}, 100`}
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                  </svg>
+                  <span className="next-up-timer-text">{promptCountdown}</span>
+                </div>
+              </div>
+
+              <div className="next-up-info">
+                <div className="next-up-label">Next Episode in {promptCountdown}s</div>
+                <div className="next-up-ep-title">
+                  Episode {nextEpisode.number}
+                </div>
+              </div>
+              
+              <button className="next-up-close" onClick={(e) => {
+                e.stopPropagation();
+                setShowNextUpPrompt(false);
+                if (timerRef.current) clearInterval(timerRef.current);
+              }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
       </>,
       playerElement
     );
@@ -317,37 +422,18 @@ function SeriesJwPlayer() {
         onMouseLeave={() => setShowInfo(false)}
       >
         <div className="player">
-          <ReactJwPlayer
+          <ShakaPlayer
             playerId="my-unique-id"
-            playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
-            file={`/vod/proxy/master.m3u8?url=${encodeURIComponent(
+            src={seriesLink ? `/vod/proxy/master.m3u8?url=${encodeURIComponent(
               seriesLink
-            )}`}
-            image={
+            )}` : null}
+            poster={
               "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
             }
             onComplete={handleVideoComplete}
-            onPlay={() => setIsAutoPlayActive(false)}
+            onPlay={handleOnPlay}
             onReady={handlePlayerReady}
-            privacy={true}
-            customProps={{
-              primary: "html5",
-              hlshtml: true,
-              skin: {
-                name: "netflix",
-              },
-              preload: "auto",
-              hlsjsConfig: {
-                maxLoadingDelay: 2,
-                minAutoBitrate: 0,
-                lowLatencyMode: true,
-                subtitlePreference: {
-                  lang: "en-US",
-                },
-                maxBufferHole: 3,
-                maxBufferLength: 12,
-              },
-            }}
+            onTimeUpdate={handleTimeUpdate}
           />
         </div>
 
@@ -369,4 +455,4 @@ function SeriesJwPlayer() {
   );
 }
 
-export default SeriesJwPlayer;
+export default SeriesShakaPlayer;

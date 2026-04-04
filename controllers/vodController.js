@@ -8,13 +8,26 @@ let lastIndex = -1;
 exports.proxySegment = async (req, res) => {
   try {
     const segmentUrl = decodeURIComponent(req.query.url);
+    const targetHostname = new URL(segmentUrl).hostname;
+    const cleanHeaders = { ...req.headers };
+    delete cleanHeaders.host;
+    delete cleanHeaders.origin;
+    delete cleanHeaders.referer;
+    delete cleanHeaders["sec-ch-ua"];
+    delete cleanHeaders["sec-ch-ua-mobile"];
+    delete cleanHeaders["sec-ch-ua-platform"];
+
     // Fetch the segment with axios using stream response
     const response = await axios.get(segmentUrl, {
-      headers: req.headers,
+      headers: {
+        ...cleanHeaders,
+        Host: targetHostname,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
       responseType: "stream",
     });
 
-    // Forward headers from the original response
+    // Forward headers from the original response (like Content-Type, Content-Length)
     Object.entries(response.headers).forEach(([name, value]) => {
       res.setHeader(name, value);
     });
@@ -22,7 +35,7 @@ exports.proxySegment = async (req, res) => {
     // Pipe the response stream
     response.data.pipe(res);
   } catch (error) {
-    console.error("Segment proxy error:", error);
+    console.error("Segment proxy error:", error.message);
     res.status(500).send("Segment proxy error");
   }
 };
@@ -30,29 +43,36 @@ exports.proxySegment = async (req, res) => {
 exports.proxyHttpStream = async (req, res, next) => {
   try {
     const originalUrl = decodeURIComponent(req.query.url);
-
-    for (let i = originalUrl.length - 1; i > 0; i--) {
-      if (originalUrl[i] === "/") {
-        lastIndex = i;
-        break;
-      }
-    }
-    let baseUrl = originalUrl.substring(0, lastIndex + 1);
-    // Fetch the original m3u8 with axios
-    let changedUrlToTrack = originalUrl.replace(
+    const targetUrl = originalUrl.replace(
       /index.m3u8|video.m3u8/g,
       "tracks-v1a1/mono.m3u8"
     );
-    const response = await axios.get(changedUrlToTrack, {
-      headers: req.headers,
+
+    const targetHostname = new URL(targetUrl).hostname;
+    const cleanHeaders = { ...req.headers };
+    delete cleanHeaders.host;
+    delete cleanHeaders.origin;
+    delete cleanHeaders.referer;
+    delete cleanHeaders["sec-ch-ua"];
+    delete cleanHeaders["sec-ch-ua-mobile"];
+    delete cleanHeaders["sec-ch-ua-platform"];
+    delete cleanHeaders["sec-fetch-dest"];
+    delete cleanHeaders["sec-fetch-mode"];
+    delete cleanHeaders["sec-fetch-site"];
+
+    const response = await axios.get(targetUrl, {
+      headers: {
+        ...cleanHeaders,
+        Host: targetHostname,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
       responseType: "text",
     });
 
-    // const response = await fetch(changedUrlToTrack, {
-    //   headers: { ...req.headers, Host: new URL(originalUrl).hostname },
-    // });
-    const data = await response.data;
-    const m3u8Content = data;
+    const m3u8Content = response.data;
+    const urlParts = originalUrl.split("/");
+    urlParts.pop();
+    const baseUrl = urlParts.join("/") + "/";
     const parser = new Parser();
 
     parser.push(m3u8Content);

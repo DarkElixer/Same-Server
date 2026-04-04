@@ -423,3 +423,198 @@
 :-ms-fullscreen .compact-episode-list-container {
   display: none !important;
 }
+/* Next Up Prompt Styles (Bottom Right) */
+.next-up-prompt {
+  position: absolute;
+  bottom: 80px; /* Above the player control bar */
+  right: 20px;
+  z-index: 2000;
+  animation: slideInRight 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.next-up-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 280px;
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.next-up-card:hover {
+  transform: scale(1.02);
+  background: rgba(40, 40, 40, 0.95);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.next-up-thumb {
+  position: relative;
+  width: 100px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.next-up-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.next-up-timer-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.next-up-timer-ring svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.next-up-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 3;
+}
+
+.next-up-ring-progress {
+  fill: none;
+  stroke: var(--bg-red, #e50914);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 1s linear;
+}
+
+.next-up-timer-text {
+  font-family: "Rubik", Arial, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  z-index: 3;
+}
+
+.next-up-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+}
+
+.next-up-thumb-placeholder svg {
+  width: 24px;
+  height: 24px;
+}
+
+.next-up-badge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(229, 9, 20, 0.9);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 2px 0;
+  text-transform: uppercase;
+}
+
+.next-up-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.next-up-label {
+  font-size: 0.75rem;
+  color: #b3b3b3;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.next-up-ep-title {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.next-up-close {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #333;
+  color: #fff;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.next-up-card:hover .next-up-close {
+  opacity: 1;
+}
+
+.next-up-close svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Responsiveness for Next Up */
+@media screen and (max-width: 768px) {
+  .next-up-prompt {
+    bottom: 20px;
+    right: 10px;
+    left: 10px; /* Full width on mobile */
+  }
+
+  .next-up-card {
+    width: 100% !important;
+  }
+}

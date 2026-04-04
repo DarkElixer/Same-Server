@@ -46,7 +46,7 @@ function CompactEpisodeList({
             <div
               key={episode.id}
               className={`compact-episode-item ${isCurrent ? "active" : ""}`}
-              onClick={() => !isCurrent && navigate(episodeUrl)}
+              onClick={() => !isCurrent && navigate(episodeUrl, { replace: true })}
             >
               <div className="compact-episode-thumb">
                 <Image
