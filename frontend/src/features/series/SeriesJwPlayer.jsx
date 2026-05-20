@@ -9,6 +9,7 @@ import "../../styles/player_overlay.css";
 import ReactJwPlayer from "react-jw-player";
 import Loader from "../../ui/Loader";
 import CompactEpisodeList from "./CompactEpisodeList";
+import usePlaybackTracking from "../../hooks/usePlaybackTracking";
 
 function SeriesJwPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
@@ -168,6 +169,19 @@ function SeriesJwPlayer() {
     return null;
   })();
 
+  // Heartbeat + resume tracking — only meaningful once we know which
+  // episode the user is watching.
+  const { handleReady: handlePlaybackReady } = usePlaybackTracking({
+    playerId: "my-unique-id",
+    contentType: "series",
+    contentId: seriesIdFromURL,
+    seasonId: seasonIdFromURL,
+    episodeId: episodeIdFromURL,
+    seriesNo: seriesNoFromURL,
+    title: displaySeriesName || undefined,
+    posterUrl: undefined,
+  });
+
   const handleNextEpisode = () => {
     if (nextEpisode) {
       const nextEpisodeUrl = `/series/${seriesName}/${seasonNo}/play/episode-${nextEpisode.number}-${nextEpisode.id}`;
@@ -211,6 +225,9 @@ function SeriesJwPlayer() {
     if (playerNode) {
       setPlayerElement(playerNode);
     }
+    // Attach playback tracking listeners now that window.jwplayer(id)
+    // is initialised.
+    handlePlaybackReady();
   };
 
   useEffect(() => {

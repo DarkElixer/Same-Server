@@ -1,0 +1,81 @@
+// Prisma schema for the Same-Server persistence layer.
+//
+// Backed by Supabase Postgres. `DATABASE_URL` should be the Supabase
+// connection-pooler URL (port 6543, pgbouncer=true, connection_limit=1)
+// and `DIRECT_URL` should be the direct Postgres URL (port 5432) which
+// `prisma migrate` needs for advisory locks / DDL.
+//
+// All identity is keyed off an anonymous device UUID minted by the
+// browser and sent on every /me/* request as `X-Viewer-Key`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ContentType {
+  MOVIE
+  SERIES
+
+  @@map("content_type")
+}
+
+model Viewer {
+  id         String   @id @default(uuid()) @db.Uuid
+  deviceKey  String   @unique @map("device_key")
+  createdAt  DateTime @default(now()) @map("created_at")
+  lastSeenAt DateTime @default(now()) @map("last_seen_at")
+
+  progress WatchProgress[]
+  events   PlaybackEvent[]
+
+  @@map("viewer")
+}
+
+model WatchProgress {
+  id          String      @id @default(uuid()) @db.Uuid
+  viewerId    String      @map("viewer_id") @db.Uuid
+  contentType ContentType @map("content_type")
+  contentId   String      @map("content_id")
+  seasonId    String?     @map("season_id")
+  episodeId   String?     @map("episode_id")
+  seriesNo    String?     @map("series_no")
+  // Postgres treats NULL as non-unique, so we materialise a non-null
+  // surrogate (`episodeId ?? ''`) for use in the composite unique key.
+  episodeKey  String      @map("episode_key")
+  positionSec Int         @map("position_sec")
+  durationSec Int         @map("duration_sec")
+  percent     Float
+  finished    Boolean     @default(false)
+  title       String?
+  posterUrl   String?     @map("poster_url")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  viewer Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+
+  @@unique([viewerId, contentType, contentId, episodeKey], name: "viewer_content_episode")
+  @@index([viewerId, updatedAt(sort: Desc)])
+  @@map("watch_progress")
+}
+
+model PlaybackEvent {
+  id          BigInt      @id @default(autoincrement())
+  viewerId    String      @map("viewer_id") @db.Uuid
+  contentType ContentType @map("content_type")
+  contentId   String      @map("content_id")
+  episodeId   String?     @map("episode_id")
+  positionSec Int         @map("position_sec")
+  durationSec Int?        @map("duration_sec")
+  occurredAt  DateTime    @default(now()) @map("occurred_at")
+
+  viewer Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+
+  @@index([contentType, occurredAt])
+  @@index([viewerId, occurredAt])
+  @@map("playback_event")
+}

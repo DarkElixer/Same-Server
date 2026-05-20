@@ -3,24 +3,41 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import ReactJwPlayer from "react-jw-player";
 import Loader from "../../ui/Loader";
+import usePlaybackTracking from "../../hooks/usePlaybackTracking";
+
+const PLAYER_ID = "my-unique-id";
 
 function VodJwPlayer() {
   const { movieName } = useParams();
   const movieId = movieName.split("-").pop();
+  const movieTitle = movieName
+    .split("-")
+    .slice(0, -1)
+    .join(" ")
+    .replace(/%20/g, " ");
   const { data: movieLink, isLoading } = useQuery({
     queryKey: ["movieLink", movieId],
     queryFn: () => getMovieLiveLink(movieId),
     cacheTime: Infinity,
   });
 
+  const { handleReady } = usePlaybackTracking({
+    playerId: PLAYER_ID,
+    contentType: "movie",
+    contentId: movieId,
+    title: movieTitle || undefined,
+    posterUrl: undefined,
+  });
+
   if (isLoading) return <Loader />;
   return (
     <div className="player">
       <ReactJwPlayer
-        playerId="my-unique-id"
+        playerId={PLAYER_ID}
         playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
         file={`/vod/proxy/master.m3u8?url=${encodeURIComponent(movieLink)}`}
         privacy={true}
+        onReady={handleReady}
         image={
           "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
         }
