@@ -14,11 +14,11 @@ import Error from "./ui/Error";
 import NotFound from "./ui/NotFound";
 import SearchedItemBox from "./features/SearchBar/SearchedItemBox";
 import Loader from "./ui/Loader";
-import VodJwPlayer from "./features/vod/VodJwPlayer";
-import JWPlayer from "./features/live/JWPlayer";
+import VodPlayer from "./features/vod/VodPlayer";
+import LivePlayer from "./features/live/LivePlayer";
 import SeriesSeasonsList from "./features/series/SeriesSeasonsList";
 import SeriesSeasonEpisodesList from "./features/series/SeriesSeasonEpisodesList";
-import SeriesJwPlayer from "./features/series/SeriesJwPlayer";
+import SeriesPlayer from "./features/series/SeriesPlayer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,16 +82,16 @@ const router = createBrowserRouter([
   },
   {
     path: "live/play/:channelname",
-    element: <JWPlayer />,
+    element: <LivePlayer />,
     errorElement: <Error />,
   },
   {
     path: "/movie/play/:movieName",
-    element: <VodJwPlayer />,
+    element: <VodPlayer />,
   },
   {
     path: "/series/:seriesName/:seasonNo/play/:episodeNo",
-    element: <SeriesJwPlayer />,
+    element: <SeriesPlayer />,
     errorElement: <Error />,
   },
   {

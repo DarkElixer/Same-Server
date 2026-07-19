@@ -383,15 +383,12 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 /* Responsive Visibility & Layout */
 @media screen and (max-width: 768px) {
-  .player-page-container {
-    height: 100dvh;
-    overflow: hidden;
-  }
-
   .player-wrapper {
     flex: 0 0 auto;
     height: auto !important;

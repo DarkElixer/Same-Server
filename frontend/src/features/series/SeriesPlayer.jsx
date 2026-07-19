@@ -3,14 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import "../../styles/player.css";
 import "../../styles/player_overlay.css";
 
-import ReactJwPlayer from "react-jw-player";
+import HlsPlayer from "../player/HlsPlayer";
 import PlayerSkeleton from "../../ui/PlayerSkeleton";
 import CompactEpisodeList from "./CompactEpisodeList";
 
-function SeriesJwPlayer() {
+function SeriesPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
   const [showInfo, setShowInfo] = useState(false);
   const [isAutoPlayActive, setIsAutoPlayActive] = useState(false);
@@ -204,14 +203,6 @@ function SeriesJwPlayer() {
     }
   };
 
-  const handlePlayerReady = () => {
-    // Locate the specific player DOM element to mount the portal
-    const playerNode = document.getElementById("my-unique-id");
-    if (playerNode) {
-      setPlayerElement(playerNode);
-    }
-  };
-
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -316,37 +307,14 @@ function SeriesJwPlayer() {
         onMouseLeave={() => setShowInfo(false)}
       >
         <div className="player">
-          <ReactJwPlayer
-            playerId="my-unique-id"
-            playerScript="https://content.jwplatform.com/libraries/IDzF9Zmk.js"
-            file={`/vod/proxy/master.m3u8?url=${encodeURIComponent(
-              seriesLink
-            )}`}
-            image={
-              "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
-            }
+          <HlsPlayer
+            src={`/vod/proxy/master.m3u8?url=${encodeURIComponent(seriesLink)}`}
+            poster="https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
+            autoPlay
+            fullscreen={false}
             onComplete={handleVideoComplete}
             onPlay={() => setIsAutoPlayActive(false)}
-            onReady={handlePlayerReady}
-            privacy={true}
-            customProps={{
-              primary: "html5",
-              hlshtml: true,
-              skin: {
-                name: "netflix",
-              },
-              preload: "auto",
-              hlsjsConfig: {
-                maxLoadingDelay: 2,
-                minAutoBitrate: 0,
-                lowLatencyMode: true,
-                subtitlePreference: {
-                  lang: "en-US",
-                },
-                maxBufferHole: 3,
-                maxBufferLength: 12,
-              },
-            }}
+            onReady={setPlayerElement}
           />
         </div>
 
@@ -368,4 +336,4 @@ function SeriesJwPlayer() {
   );
 }
 
-export default SeriesJwPlayer;
+export default SeriesPlayer;

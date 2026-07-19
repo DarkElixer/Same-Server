@@ -24,30 +24,11 @@ body {
     background-color: ${({ theme }) => theme.colors.background};
     color: ${({ theme }) => theme.colors.text};
 }
-.plyr--video {
-    width: 100%;
-    object-fit: fill;
-}
-
-.video_player {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-}
 .player{
     place-content: center;
     height: 100vh;
 }
 
-.jwplayer{
-    margin: 0 auto !important;
-    max-height: 100dvh !important;
-    
-}
-.jw-video{
-    object-fit: fill !important;
-}
 a,a:link{
  text-decoration: none;
 }
