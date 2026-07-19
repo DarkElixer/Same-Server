@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "cd frontend && npm run build && cd .. && node --watch server.js",
+    "dev": "cd frontend && npm run build && cd .. && node --watch server.js",
+    "start": "node --watch server.js",
     "prod": "cd frontend && npm run build"
   },
   "author": "",
