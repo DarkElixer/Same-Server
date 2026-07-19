@@ -1,8 +1,14 @@
 import { NavLink, useLoaderData } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { PiTelevisionFill, PiFilmSlateFill } from "react-icons/pi";
-import { generateToken } from "../../services/apiIptv";
+import { generateToken, getAllCategories } from "../../services/apiIptv";
+import { replaceSpecialChars } from "../../util/helper";
 import Error from "../../ui/Error";
 import ContinueWatching from "./ContinueWatching";
+import MyListPreview from "./MyListPreview";
+import VodRow from "./VodRow";
+
+const GENRE_ROW_LIMIT = 5;
 
 import styled from "styled-components";
 
@@ -69,10 +75,28 @@ const GridBox = styled.div`
 
 function Home() {
   const data = useLoaderData();
+  const { data: vodGenres } = useQuery({
+    queryKey: ["vodCategories"],
+    queryFn: () => getAllCategories("vod"),
+    staleTime: Infinity,
+  });
   if (data !== undefined) return <Error />;
+  const genreRows = (vodGenres ?? [])
+    .filter((genre) => genre.title !== "All")
+    .slice(0, GENRE_ROW_LIMIT);
   return (
     <>
       <ContinueWatching />
+      <MyListPreview />
+      <VodRow title="Newly Added" categoryId="*" />
+      {genreRows.map((genre) => (
+        <VodRow
+          key={genre.id}
+          title={genre.title}
+          categoryId={genre.id}
+          viewAllLink={`/vod/categories/${replaceSpecialChars(genre.title)}-${genre.id}`}
+        />
+      ))}
       <GridBox>
         <Link to="/live/categories">
           <StyledItem>
