@@ -13,8 +13,8 @@ const Header = styled.header`
   height: 6rem;
   position: sticky;
   top: 0;
-  border-bottom: 1px solid #333;
-  background-color: #000;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.background};
   z-index: 1000;
   transition: all 0.3s ease;
 `;

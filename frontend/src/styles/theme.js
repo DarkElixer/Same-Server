@@ -1,0 +1,33 @@
+export const theme = {
+  colors: {
+    background: "black",
+    border: "#333",
+    text: "white",
+    textOnLight: "black",
+    surfaceLight: "#fff",
+    surfaceRaised: "#2a2a2a",
+    surfaceRaisedHighlight: "#3a3a3a",
+    accent: "#fb2",
+    accentHover: "#bbcc",
+    danger: "red",
+    muted: "gray",
+    overlay: "rgba(0,0,0,0.5)",
+    imagePlaceholder: "rgba(255, 255, 255, 0.1)",
+    cardShadow: "rgba(31, 38, 135, 0.37)",
+    loaderAccent: "#ff3d00",
+    loaderGradient: "#25b09b",
+    linkHover: "#166aea",
+    gradientPrimary: "linear-gradient(to top left, #1e9600, #fff200, #ff0000)",
+    gradientPrimaryHover: "linear-gradient(to top left, #ffe000, #799f0c)",
+  },
+  radii: {
+    none: "0",
+    sm: "0.8rem",
+    md: "1rem",
+    pill: "50px",
+    circle: "50%",
+  },
+  shadows: {
+    card: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+  },
+};

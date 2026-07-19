@@ -11,7 +11,7 @@ import { Fragment, useRef, useState } from "react";
 
 import MiniLoader from "../../ui/MiniLoader";
 import StyledSelect from "../../ui/Select";
-import Loader from "../../ui/Loader";
+import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
 
 function SeriesSeasonsList() {
@@ -95,7 +95,7 @@ function SeriesSeasonsList() {
           ) : null}
         </GridBox>
       ) : (
-        <Loader />
+        <GridSkeleton />
       )}
     </>
   );

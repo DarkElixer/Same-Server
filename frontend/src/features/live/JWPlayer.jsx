@@ -2,7 +2,7 @@ import { getLiveChannelLink } from "../../services/apiLive";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import ReactJwPlayer from "react-jw-player";
-import Loader from "../../ui/Loader";
+import PlayerSkeleton from "../../ui/PlayerSkeleton";
 
 function JWPlayer() {
   const { channelname } = useParams();
@@ -11,7 +11,7 @@ function JWPlayer() {
     queryKey: ["channelLink", channelname],
     queryFn: () => getLiveChannelLink(`ffrt http://localhost/ch/${channelId}`),
   });
-  if (isLoading) return <Loader />;
+  if (isLoading) return <PlayerSkeleton />;
   const channelLink = data?.data;
   return (
     <div className="player">

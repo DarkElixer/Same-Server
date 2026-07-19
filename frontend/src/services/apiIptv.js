@@ -1,8 +1,3 @@
-import { wait } from "../util/helper";
-
-// export const host = "https://same-server-production.up.railway.app";
-// export const host = "http://localhost:3152";
-
 export const generateToken = async () => {
   const res = await fetch(`/authenticate`);
   const data = res.json();
@@ -21,8 +16,7 @@ export const getProfile = async () => {
   return data;
 };
 
-export const getAllCategories = async (type, attempt = 1) => {
-  if (attempt >= 3) return;
+export const getAllCategories = async (type) => {
   const res = await fetch(`/${type}/categories`, {
     method: "POST",
     body: JSON.stringify({ token: localStorage.token }),
@@ -32,20 +26,13 @@ export const getAllCategories = async (type, attempt = 1) => {
   });
   const { data, status } = await res.json();
   if (status === "fail") {
-    await wait(1);
     await getProfile();
-    return getAllCategories(type, attempt + 1);
+    throw new Error("Failed to fetch categories");
   }
   return data;
 };
 
-export const getAllCategoriesChannel = async (
-  type,
-  categoryId,
-  page = 1,
-  attempt = 1
-) => {
-  if (attempt >= 3) return;
+export const getAllCategoriesChannel = async (type, categoryId, page = 1) => {
   const res = await fetch(`/${type}/categories/${categoryId}?page=${page}`, {
     method: "POST",
     body: JSON.stringify({ token: localStorage.token }),
@@ -60,9 +47,8 @@ export const getAllCategoriesChannel = async (
     data.data == undefined ||
     data.data.length === 0
   ) {
-    await wait(2);
     await getProfile();
-    return getAllCategoriesChannel(type, categoryId, page, attempt + 1);
+    throw new Error("Failed to fetch channels");
   }
   return data;
 };

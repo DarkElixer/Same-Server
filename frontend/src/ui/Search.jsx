@@ -18,12 +18,12 @@ const SearchIcon = styled(BiSearch)`
 const Input = styled.input`
   padding: 1rem 1rem;
   background-color: transparent;
-  border: 1px solid gray;
+  border: 1px solid ${({ theme }) => theme.colors.muted};
   outline: none;
   transition: all 0.5s linear;
   width: 0;
   opacity: 0;
-  color: red;
+  color: ${({ theme }) => theme.colors.danger};
   font-size: 2rem;
   font-weight: 400;
   @media (max-width: 900px) {

@@ -5,17 +5,16 @@ import { Heading } from "../../ui/Heading";
 import { GridBox } from "../../ui/GridBox";
 import { Box } from "../../ui/Box";
 
-import Loader from "../../ui/Loader";
+import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
 
 function LiveCategories() {
   const { isLoading, data } = useQuery({
     queryKey: ["liveCategories"],
     queryFn: () => getAllCategories("live"),
-    retry: false,
     staleTime: Infinity,
   });
-  if (isLoading) return <Loader />;
+  if (isLoading) return <GridSkeleton />;
   return (
     <>
       <div className="header">

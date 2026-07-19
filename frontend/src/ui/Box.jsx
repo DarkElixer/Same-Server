@@ -5,7 +5,7 @@ export const Box = styled(Link)`
   display: inline-block;
   position: relative;
   margin: 2rem;
-  border-radius: 0.8rem;
+  border-radius: ${({ theme }) => theme.radii.sm};
   cursor: pointer;
   transition: scale 0.5s ease-in-out;
   color: white;
@@ -30,5 +30,5 @@ export const Box = styled(Link)`
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  box-shadow: ${({ theme }) => theme.shadows.card};
 `;

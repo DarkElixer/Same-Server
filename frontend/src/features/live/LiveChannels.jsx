@@ -9,7 +9,7 @@ import { Box } from "../../ui/Box";
 import { Fragment } from "react";
 
 import MiniLoader from "../../ui/MiniLoader";
-import Loader from "../../ui/Loader";
+import GridSkeleton from "../../ui/GridSkeleton";
 import { portal } from "../../constants/servicesConstants";
 import Image from "../../ui/Image";
 
@@ -58,7 +58,7 @@ function LiveChannels() {
           )}
         </GridBox>
       ) : (
-        <Loader />
+        <GridSkeleton />
       )}
     </>
   );

@@ -11,11 +11,11 @@ import { Box } from "../../ui/Box";
 
 import MiniLoader from "../../ui/MiniLoader";
 import StyledSelect from "../../ui/Select";
-import Loader from "../../ui/Loader";
 import Image from "../../ui/Image";
 import Group from "../../ui/Group";
 
 import GroupSkeleton from "../../ui/GroupSkeleton";
+import GridSkeleton from "../../ui/GridSkeleton";
 
 function SeriesSeasonEpisodesList() {
   const total_items = useRef(0);
@@ -85,7 +85,7 @@ function SeriesSeasonEpisodesList() {
         )}
       </div>
       {status === "pending" && !data ? (
-        <Loader />
+        <GridSkeleton />
       ) : status !== "error" ? (
         <GridBox>
           {data.pages.map((group, i) => (

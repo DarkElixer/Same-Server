@@ -7,7 +7,7 @@ const StyledImage = styled.img`
   height: 100%;
   object-fit: ${(prop) => (prop.$variant === "small" ? "none" : "fill")};
   mask-image: linear-gradient(black, transparent 90%);
-  background: rgba(255, 255, 255, 0.1);
+  background: ${({ theme }) => theme.colors.imagePlaceholder};
   border-radius: inherit;
   z-index: 100;
 `;

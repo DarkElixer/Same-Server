@@ -10,7 +10,7 @@ import { Box } from "../../ui/Box";
 import { Fragment } from "react";
 
 import MiniLoader from "../../ui/MiniLoader";
-import Loader from "../../ui/Loader";
+import GridSkeleton from "../../ui/GridSkeleton";
 import { portal } from "../../constants/servicesConstants";
 import Image from "../../ui/Image";
 
@@ -19,7 +19,7 @@ function SearchedItemBox() {
   const query = searchParams.get("q");
   const { ref, data, isFetchingNextPage, status, hasNextPage } =
     useInfiniteScrolling("vod", query, getVodItemBySearch);
-  if (status === "pending") return <Loader />;
+  if (status === "pending") return <GridSkeleton />;
   const total_items = +data.pages[0].total_items;
   return (
     <>

@@ -1,9 +1,3 @@
-export const wait = async function (time) {
-  return new Promise((res) => {
-    setTimeout(res, time * 1000);
-  });
-};
-
 export function replaceSpecialChars(str) {
   return str
     .toLowerCase()

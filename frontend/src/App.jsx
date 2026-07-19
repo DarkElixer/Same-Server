@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "styled-components";
+import { theme } from "./styles/theme";
 import VodCategoriesItem from "./features/vod/VodCategoriesItem";
 import LiveCategories from "./features/live/LiveCategories";
 import VodCategories from "./features/vod/VodCategories";
@@ -23,7 +25,9 @@ const queryClient = new QueryClient({
     queries: {
       gcTime: 24 * 60 * 60 * 1000,
       staleTime: Infinity,
-      cacheTime: Infinity,
+      retry: 3,
+      retryDelay: (attempt) =>
+        Math.min(1000 * 2 ** attempt, 10000) + Math.random() * 300,
     },
   },
 });
@@ -98,9 +102,11 @@ const router = createBrowserRouter([
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <GlobalStyles />
-      <RouterProvider router={router} />
+      <ThemeProvider theme={theme}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <GlobalStyles />
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

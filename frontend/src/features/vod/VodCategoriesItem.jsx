@@ -9,7 +9,7 @@ import { Box } from "../../ui/Box";
 import { Fragment } from "react";
 import { portal } from "../../constants/servicesConstants";
 import MiniLoader from "../../ui/MiniLoader";
-import Loader from "../../ui/Loader";
+import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
 
 function VodCategoriesItem() {
@@ -63,7 +63,7 @@ function VodCategoriesItem() {
           ) : null}
         </GridBox>
       ) : (
-        <Loader />
+        <GridSkeleton />
       )}
     </>
   );

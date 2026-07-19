@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { theme } from "../styles/theme";
 
 const StyledGroup = styled.div`
   display: flex;
@@ -10,16 +11,16 @@ const StyledGroup = styled.div`
     display: none;
   }
   & span {
-    border: 1px solid #fb2;
-    border-radius: 1rem;
+    border: 1px solid ${({ theme }) => theme.colors.accent};
+    border-radius: ${({ theme }) => theme.radii.md};
     padding: 0.3rem 1.3vh;
     font-weight: 600;
     flex: 0 0 fit-content;
     transition: background 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95);
     &:hover {
-      background-color: #bbcc;
+      background-color: ${({ theme }) => theme.colors.accentHover};
       cursor: pointer;
-      color: black;
+      color: ${({ theme }) => theme.colors.textOnLight};
     }
   }
 `;
@@ -77,8 +78,8 @@ function EpisodeRange({
   return (
     <span
       style={{
-        backgroundColor: isSelected ? "#fb2" : "transparent",
-        color: isSelected ? "black" : "inherit",
+        backgroundColor: isSelected ? theme.colors.accent : "transparent",
+        color: isSelected ? theme.colors.textOnLight : "inherit",
       }}
       onClick={handleClick}
     >

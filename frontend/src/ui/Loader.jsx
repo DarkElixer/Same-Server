@@ -30,10 +30,10 @@ const spin = keyframes`
 const Spinner = styled.div`
   transform: rotateZ(45deg);
   perspective: 1000px;
-  border-radius: 50%;
+  border-radius: ${({ theme }) => theme.radii.circle};
   width: 10rem;
   height: 10rem;
-  color: #fff;
+  color: ${({ theme }) => theme.colors.text};
 
   &::before,
   &::after {
@@ -44,12 +44,12 @@ const Spinner = styled.div`
     left: 0;
     width: inherit;
     height: inherit;
-    border-radius: 50%;
+    border-radius: ${({ theme }) => theme.radii.circle};
     transform: rotateX(70deg);
     animation: 1s ${spin} linear infinite;
   }
   &::after {
-    color: #ff3d00;
+    color: ${({ theme }) => theme.colors.loaderAccent};
     transform: rotateY(70deg);
     animation-delay: 0.4s;
   }

@@ -1,13 +1,5 @@
-import styled, { keyframes } from "styled-components";
-
-const shimmer = keyframes`
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-`;
+import styled from "styled-components";
+import { SkeletonBlock } from "./skeletonStyles";
 
 const StyledGroupSkeleton = styled.div`
   display: flex;
@@ -17,22 +9,11 @@ const StyledGroupSkeleton = styled.div`
   overflow: hidden;
 `;
 
-const SkeletonItem = styled.div`
+const SkeletonItem = styled(SkeletonBlock)`
   width: 90px;
   height: 32px;
-  border-radius: 1rem;
-  background: #2a2a2a;
-  background-image: linear-gradient(
-    to right,
-    #2a2a2a 0%,
-    #3a3a3a 20%,
-    #2a2a2a 40%,
-    #2a2a2a 100%
-  );
-  background-repeat: no-repeat;
-  background-size: 800px 40px;
+  border-radius: ${({ theme }) => theme.radii.md};
   display: inline-block;
-  animation: ${shimmer} 2s infinite linear;
   flex: 0 0 auto;
 `;
 

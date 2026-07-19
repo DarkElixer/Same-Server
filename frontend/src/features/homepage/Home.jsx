@@ -8,8 +8,8 @@ const StyledItem = styled.div`
   min-height: 50dvh;
   padding: 1rem;
   text-align: center;
-  border: 2px solid white;
-  border-radius: 1rem;
+  border: 2px solid ${({ theme }) => theme.colors.text};
+  border-radius: ${({ theme }) => theme.radii.md};
   place-content: center;
 `;
 

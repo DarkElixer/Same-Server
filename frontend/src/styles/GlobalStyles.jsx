@@ -21,8 +21,8 @@ html {
 }
 body {
     font-family: "Wix Madefor Display", sans-serif;
-    background-color: black;
-    color: white;
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
 }
 .plyr--video {
     width: 100%;
@@ -53,7 +53,7 @@ a,a:link{
 }
 
 .header{
-    background-color: rgba(0,0,0,0.5);
+    background-color: ${({ theme }) => theme.colors.overlay};
     backdrop-filter: blur(2px);
     position: sticky;
     top: 5.5rem;
@@ -92,7 +92,7 @@ a,a:link{
   width: 40px;
   height: 40px;
   position: relative;
-  --c:no-repeat linear-gradient(#25b09b 0 0);
+  --c:no-repeat linear-gradient(${({ theme }) => theme.colors.loaderGradient} 0 0);
   background:
     var(--c) center/100% 10px,
     var(--c) center/10px 100%;

@@ -1,9 +1,7 @@
-import { wait } from "../util/helper";
 import { getProfile } from "./apiIptv";
 
 // get item by search in vod
-export const getVodItemBySearch = async (type, query, page, attempt = 1) => {
-  if (attempt >= 3) return;
+export const getVodItemBySearch = async (type, query, page) => {
   const res = await fetch(`/${type}/search?q=${query}&page=${page}`, {
     method: "POST",
     body: JSON.stringify({ token: localStorage.token }),
@@ -13,25 +11,20 @@ export const getVodItemBySearch = async (type, query, page, attempt = 1) => {
   });
   const { data, status } = await res.json();
   if (status === "fail") {
-    await wait(1);
     await getProfile();
-    return getVodItemBySearch(type, query, page, attempt + 1);
+    throw new Error("Failed to search vod items");
   }
   return data;
 };
 
-export const getSeriesOrMovie = async (
-  {
-    movieId = "",
-    seasonId = "",
-    episodeId = "",
-    total_items,
-    sortType,
-    page = 1,
-  },
-  attempt = 1
-) => {
-  if (attempt >= 3) return;
+export const getSeriesOrMovie = async ({
+  movieId = "",
+  seasonId = "",
+  episodeId = "",
+  total_items,
+  sortType,
+  page = 1,
+}) => {
   const res = await fetch(
     `/vod/categories/series?movieId=${movieId}&seasonId=${seasonId}&episodeId=${episodeId}&page=${page}&sort=${sortType}`,
     {
@@ -47,19 +40,14 @@ export const getSeriesOrMovie = async (
   );
   const { data, status } = await res.json();
   if (status === "fail") {
-    await wait(1);
     await getProfile();
-    return getSeriesOrMovie(
-      { movieId, seasonId, episodeId, total_items, sortType, page },
-      attempt + 1
-    );
+    throw new Error("Failed to fetch series/movie data");
   }
   return data;
 };
 
 // get movie link
-export const getMovieLiveLink = async (movieId, attempt = 1) => {
-  if (attempt >= 3) return;
+export const getMovieLiveLink = async (movieId) => {
   const movieData = await getSeriesOrMovie({ movieId });
   const episodeId = movieData.data[0].id;
   const res = await fetch(
@@ -74,19 +62,19 @@ export const getMovieLiveLink = async (movieId, attempt = 1) => {
   );
   const { data, status } = await res.json();
   if (status === "fail") {
-    await wait(1);
     await getProfile();
-    return getMovieLiveLink(movieId, attempt + 1);
+    throw new Error("Failed to fetch movie link");
   }
   return data;
 };
 
 //get Series Link
-export const getSeriesLiveLink = async (
-  { movieId, seasonId, episodeId, seriesNo },
-  attempt = 1
-) => {
-  if (attempt >= 3) return;
+export const getSeriesLiveLink = async ({
+  movieId,
+  seasonId,
+  episodeId,
+  seriesNo,
+}) => {
   const movieData = await getSeriesOrMovie({ movieId, seasonId, episodeId });
   const finalEpisodeId = movieData.data[0].id;
   const res = await fetch(
@@ -101,12 +89,8 @@ export const getSeriesLiveLink = async (
   );
   const { data, status } = await res.json();
   if (status === "fail") {
-    await wait(2);
     await getProfile();
-    return getSeriesLiveLink(
-      { movieId, seasonId, episodeId, seriesNo },
-      attempt + 1
-    );
+    throw new Error("Failed to fetch series link");
   }
   return data;
 };

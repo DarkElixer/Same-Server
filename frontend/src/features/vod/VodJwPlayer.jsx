@@ -2,7 +2,7 @@ import { getMovieLiveLink } from "../../services/apiVod";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import ReactJwPlayer from "react-jw-player";
-import Loader from "../../ui/Loader";
+import PlayerSkeleton from "../../ui/PlayerSkeleton";
 
 function VodJwPlayer() {
   const { movieName } = useParams();
@@ -10,10 +10,9 @@ function VodJwPlayer() {
   const { data: movieLink, isLoading } = useQuery({
     queryKey: ["movieLink", movieId],
     queryFn: () => getMovieLiveLink(movieId),
-    cacheTime: Infinity,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <PlayerSkeleton />;
   return (
     <div className="player">
       <ReactJwPlayer

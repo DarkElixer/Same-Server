@@ -7,7 +7,7 @@ import "../../styles/player.css";
 import "../../styles/player_overlay.css";
 
 import ReactJwPlayer from "react-jw-player";
-import Loader from "../../ui/Loader";
+import PlayerSkeleton from "../../ui/PlayerSkeleton";
 import CompactEpisodeList from "./CompactEpisodeList";
 
 function SeriesJwPlayer() {
@@ -53,7 +53,6 @@ function SeriesJwPlayer() {
         episodeId: episodeIdFromURL,
         seriesNo: seriesNoFromURL,
       }),
-    cacheTime: Infinity,
   });
 
   // Fetch all episodes for this season to find the next one
@@ -228,7 +227,7 @@ function SeriesJwPlayer() {
     }, 3000);
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <PlayerSkeleton />;
 
   // Render Overlay Content via Portal
   const renderOverlays = () => {

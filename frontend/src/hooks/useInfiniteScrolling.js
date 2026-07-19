@@ -8,8 +8,6 @@ function useInfiniteScrolling(type, query, callback) {
     useInfiniteQuery({
       queryKey: [type, query],
       queryFn: ({ pageParam }) => callback(type, query, pageParam),
-      retry: false,
-      cacheTime: Infinity,
       staleTime: Infinity,
       initialPageParam: 1,
       getNextPageParam: (lastPage, allPages, lastPageParam) => {

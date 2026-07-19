@@ -3,17 +3,17 @@ import styled, { css } from "styled-components";
 const styles = {
   main: css`
     font-weight: 800;
-    background-image: linear-gradient(to top left, #1e9600, #fff200, #ff0000);
+    background-image: ${({ theme }) => theme.colors.gradientPrimary};
     color: transparent;
     background-clip: text;
     background-size: contain;
     &:hover {
-      background-image: linear-gradient(to top left, #ffe000, #799f0c);
+      background-image: ${({ theme }) => theme.colors.gradientPrimaryHover};
     }
   `,
   secondary: css`
     font-weight: 600;
-    background-image: linear-gradient(to top left, #1e9600, #fff200, #ff0000);
+    background-image: ${({ theme }) => theme.colors.gradientPrimary};
     color: transparent;
     background-clip: text;
     background-size: contain;
@@ -29,7 +29,7 @@ const styles = {
     }
   `,
   error: css`
-    color: white;
+    color: ${({ theme }) => theme.colors.text};
     font-size: 4dvh;
     font-weight: 100;
     text-align: center;
@@ -53,7 +53,7 @@ export const Heading = styled.h1`
   margin: 0 1rem;
   display: inline-block;
   line-height: 1.6;
-  background-color: black;
+  background-color: ${({ theme }) => theme.colors.background};
   flex: 1 1 60%;
   z-index: -1000;
   ${(prop) => styles[prop.$type]}

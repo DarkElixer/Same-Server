@@ -18,8 +18,6 @@ function useInfiniteSeriesScrolling(
       queryKey: [type, excludedQuery, sortType, selectedEpisodeRange],
       queryFn: ({ pageParam }) =>
         callback({ ...query, sortType, page: pageParam }),
-      retry: false,
-      cacheTime: Infinity,
       staleTime: Infinity,
       initialPageParam: initPage,
       getNextPageParam: (lastPage, allPages, lastPageParam) => {

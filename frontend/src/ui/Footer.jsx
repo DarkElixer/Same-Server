@@ -5,5 +5,5 @@ export const Footer = styled.footer`
   justify-content: center;
   margin-bottom: 0.5rem;
   align-items: center;
-  color: white;
+  color: ${({ theme }) => theme.colors.text};
 `;

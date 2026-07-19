@@ -1,8 +1,6 @@
-import { wait } from "../util/helper";
 import { getProfile } from "./apiIptv";
 
-export const getLiveChannelLink = async (cmd, attempt = 1) => {
-  if (attempt >= 3) return;
+export const getLiveChannelLink = async (cmd) => {
   const res = await fetch(`/live/play`, {
     method: "POST",
     body: JSON.stringify({
@@ -15,9 +13,8 @@ export const getLiveChannelLink = async (cmd, attempt = 1) => {
   });
   const data = await res.json();
   if (data.status === "fail") {
-    await wait(1);
     await getProfile();
-    return getLiveChannelLink(cmd, attempt + 1);
+    throw new Error("Failed to fetch live channel link");
   }
   return data;
 };

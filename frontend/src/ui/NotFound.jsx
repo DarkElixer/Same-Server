@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 
 const StyledPage = styled.div`
   position: relative;
-  background-color: black;
+  background-color: ${({ theme }) => theme.colors.background};
   height: 100dvh;
-  color: black;
+  color: ${({ theme }) => theme.colors.textOnLight};
   padding: 1rem;
 `;
 
 const Heading = styled.h1`
-  color: white;
+  color: ${({ theme }) => theme.colors.text};
   ${(prop) => {
     return (
       prop.as === "h2" &&
@@ -35,19 +35,19 @@ const Heading = styled.h1`
   }}
 `;
 const Para = styled.p`
-  color: white;
+  color: ${({ theme }) => theme.colors.text};
   font-size: 1.95vw;
   font-weight: 400;
   margin: 8rem;
 `;
 
 const StyledLink = styled(Link)`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.colors.surfaceLight};
   border: none;
-  border-radius: 50px;
-  color: #000;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  color: ${({ theme }) => theme.colors.textOnLight};
   cursor: pointer;
-  font-family: Madefor, sans-serif;
+  font-family: "Wix Madefor Display", sans-serif;
   font-size: 1.5vw;
   font-weight: 400;
   margin: 2vh -2vw 1.2vh 8rem;
@@ -56,7 +56,7 @@ const StyledLink = styled(Link)`
   white-space: nowrap;
   padding: 1.5rem 3rem;
   &:hover {
-    background-color: #166aea;
+    background-color: ${({ theme }) => theme.colors.linkHover};
   }
 `;
 function NotFound() {
