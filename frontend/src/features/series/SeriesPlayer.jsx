@@ -209,7 +209,7 @@ function SeriesPlayer() {
   const handleNextEpisode = () => {
     if (nextEpisode) {
       const nextEpisodeUrl = `/series/${seriesName}/${seasonNo}/play/episode-${nextEpisode.number}-${nextEpisode.id}`;
-      navigate(nextEpisodeUrl);
+      navigate(nextEpisodeUrl, { replace: true });
       // Reset state for new episode
       setIsAutoPlayActive(false);
       setCountdown(10);
