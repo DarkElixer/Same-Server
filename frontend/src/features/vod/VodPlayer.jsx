@@ -32,6 +32,7 @@ function VodPlayer() {
     <HlsPlayer
       src={`/vod/proxy/master.m3u8?url=${encodeURIComponent(movieLink)}`}
       poster={POSTER}
+      title={title}
       autoPlay
       initialTime={saved?.position}
       onTimeUpdate={(position, duration) =>

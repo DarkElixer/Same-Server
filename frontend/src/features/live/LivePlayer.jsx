@@ -1,6 +1,7 @@
 import { getLiveChannelLink } from "../../services/apiLive";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { getOrignalNmae } from "../../util/helper";
 import PlayerSkeleton from "../../ui/PlayerSkeleton";
 import HlsPlayer from "../player/HlsPlayer";
 
@@ -17,6 +18,7 @@ function LivePlayer() {
     <HlsPlayer
       src={`/live/proxy/master.m3u8?url=${encodeURIComponent(channelLink)}`}
       poster="https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
+      title={getOrignalNmae(channelname)}
       autoPlay
     />
   );

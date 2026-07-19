@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import styled from "styled-components";
+import { PiSkipForwardFill } from "react-icons/pi";
 import "../../styles/player_overlay.css";
 import {
   getProgress,
@@ -17,15 +19,40 @@ import CompactEpisodeList from "./CompactEpisodeList";
 const POSTER =
   "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg";
 
+const NextEpisodeButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+  background: ${({ theme }) => theme.colors.glass};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  color: ${({ theme }) => theme.colors.text};
+  padding: 0.7rem 1.4rem;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.accent};
+    color: ${({ theme }) => theme.colors.accent};
+  }
+
+  @media (max-width: 600px) {
+    span {
+      display: none;
+    }
+    padding: 0.7rem;
+  }
+`;
+
 function SeriesPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
   const location = useLocation();
-  const [showInfo, setShowInfo] = useState(false);
   const [isAutoPlayActive, setIsAutoPlayActive] = useState(false);
   const [countdown, setCountdown] = useState(10);
   const [playerElement, setPlayerElement] = useState(null);
   const timerRef = useRef(null);
-  const inactivityTimerRef = useRef(null);
   const [selectedEpisodeRange, setSelectedEpisodeRange] = useState({
     start: 1,
     end: 1,
@@ -220,17 +247,8 @@ function SeriesPlayer() {
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
-      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
     };
   }, []);
-
-  const handleMouseMove = () => {
-    setShowInfo(true);
-    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
-    inactivityTimerRef.current = setTimeout(() => {
-      setShowInfo(false);
-    }, 3000);
-  };
 
   if (isLoading) return <PlayerSkeleton />;
 
@@ -240,38 +258,6 @@ function SeriesPlayer() {
 
     return createPortal(
       <>
-        {/* Episode Info Overlay */}
-        <div
-          className={`episode-info-overlay ${
-            showInfo && !isAutoPlayActive ? "show" : ""
-          }`}
-        >
-          <div className="episode-info-header">
-            <div className="episode-info-content">
-              <h2 className="episode-series-name">{displaySeriesName}</h2>
-              <div className="episode-details">
-                <span className="episode-season">{displaySeasonName}</span>
-                <span className="episode-separator">•</span>
-                <span className="episode-number">Episode {episodeNumber}</span>
-              </div>
-            </div>
-
-            {nextEpisode && (
-              <button className="next-episode-btn" onClick={handleNextEpisode}>
-                <span>Next Episode</span>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M5 4V20L19 12L5 4Z" fill="currentColor" />
-                  <path d="M19 4V20H21V4H19Z" fill="currentColor" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
-
         {/* Auto Play Overlay */}
         {isAutoPlayActive && nextEpisode && (
           <div className="autoplay-overlay">
@@ -315,15 +301,21 @@ function SeriesPlayer() {
 
   return (
     <div className="player-page-container">
-      <div
-        className="player-wrapper"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={() => setShowInfo(false)}
-      >
+      <div className="player-wrapper">
         <div className="player">
           <HlsPlayer
             src={`/vod/proxy/master.m3u8?url=${encodeURIComponent(seriesLink)}`}
             poster={POSTER}
+            title={displaySeriesName}
+            subtitle={`${displaySeasonName} • Episode ${episodeNumber}`}
+            topBarAction={
+              nextEpisode && (
+                <NextEpisodeButton onClick={handleNextEpisode}>
+                  <span>Next Episode</span>
+                  <PiSkipForwardFill />
+                </NextEpisodeButton>
+              )
+            }
             autoPlay
             fullscreen={false}
             initialTime={savedProgress?.position}
