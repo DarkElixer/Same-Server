@@ -1,16 +1,25 @@
 import { getSeriesLiveLink, getSeriesOrMovie } from "../../services/apiVod";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import "../../styles/player_overlay.css";
+import {
+  getProgress,
+  removeProgress,
+  saveProgress,
+} from "../../util/continueWatching";
 
 import HlsPlayer from "../player/HlsPlayer";
 import PlayerSkeleton from "../../ui/PlayerSkeleton";
 import CompactEpisodeList from "./CompactEpisodeList";
 
+const POSTER =
+  "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg";
+
 function SeriesPlayer() {
   const { seriesName, seasonNo, episodeNo } = useParams();
+  const location = useLocation();
   const [showInfo, setShowInfo] = useState(false);
   const [isAutoPlayActive, setIsAutoPlayActive] = useState(false);
   const [countdown, setCountdown] = useState(10);
@@ -39,6 +48,10 @@ function SeriesPlayer() {
 
   const episodeArray = episodeNo.split("-");
   const episodeNumber = episodeArray[1];
+
+  const resumeKey = location.pathname;
+  const episodeTitle = `${displaySeriesName} - ${displaySeasonName} Episode ${episodeNumber}`;
+  const savedProgress = getProgress(resumeKey);
 
   const { data: seriesLink, isLoading } = useQuery({
     queryKey: [
@@ -184,6 +197,7 @@ function SeriesPlayer() {
   };
 
   const handleVideoComplete = () => {
+    removeProgress(resumeKey);
     if (nextEpisode) {
       setIsAutoPlayActive(true);
       setCountdown(10);
@@ -309,9 +323,20 @@ function SeriesPlayer() {
         <div className="player">
           <HlsPlayer
             src={`/vod/proxy/master.m3u8?url=${encodeURIComponent(seriesLink)}`}
-            poster="https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg"
+            poster={POSTER}
             autoPlay
             fullscreen={false}
+            initialTime={savedProgress?.position}
+            onTimeUpdate={(position, duration) =>
+              saveProgress({
+                url: resumeKey,
+                position,
+                duration,
+                title: episodeTitle,
+                poster: POSTER,
+                type: "series",
+              })
+            }
             onComplete={handleVideoComplete}
             onPlay={() => setIsAutoPlayActive(false)}
             onReady={setPlayerElement}

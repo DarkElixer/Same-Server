@@ -9,19 +9,20 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: inherit;
 }
 button{
-    font-family: "Wix Madefor Display", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
-/* a{
-    color: red;
-} */
 html {
     box-sizing: border-box;
     font-size: 62.5%; /* 10px */
     line-height: 1;
+    --page-px: clamp(1.6rem, 4vw, 6rem);
 }
 body {
-    font-family: "Wix Madefor Display", sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: ${({ theme }) => theme.colors.background};
+    background-image: radial-gradient(circle at 20% 0%, rgba(42, 125, 143, 0.12), transparent 40%),
+        radial-gradient(circle at 90% 20%, rgba(255, 193, 7, 0.06), transparent 35%);
+    background-attachment: fixed;
     color: ${({ theme }) => theme.colors.text};
 }
 .player{
@@ -34,12 +35,14 @@ a,a:link{
 }
 
 .header{
-    background-color: ${({ theme }) => theme.colors.overlay};
-    backdrop-filter: blur(2px);
+    background-color: ${({ theme }) => theme.colors.glass};
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
     position: sticky;
     top: 5.5rem;
     z-index: 1000;
-    padding-bottom: 1rem;
+    padding: 1.6rem var(--page-px) 1.2rem;
     display: flex;
     flex-direction: column;
 }
@@ -54,8 +57,8 @@ a,a:link{
 @media (max-width: 768px) {
     .top{
         flex-direction: column;
-        margin-top: 5px;
         align-items: start;
+        gap: 0.8rem;
 
         & > {
         flex: 1;

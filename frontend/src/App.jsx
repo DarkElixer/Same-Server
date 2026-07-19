@@ -19,6 +19,7 @@ import LivePlayer from "./features/live/LivePlayer";
 import SeriesSeasonsList from "./features/series/SeriesSeasonsList";
 import SeriesSeasonEpisodesList from "./features/series/SeriesSeasonEpisodesList";
 import SeriesPlayer from "./features/series/SeriesPlayer";
+import MyList from "./features/mylist/MyList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
       {
         path: "/search",
         element: <SearchedItemBox />,
+        errorElement: <Error />,
+      },
+      {
+        path: "/my-list",
+        element: <MyList />,
         errorElement: <Error />,
       },
       {

@@ -37,7 +37,7 @@ function SeriesSeasonsList() {
     <>
       <div className="header">
         <div className="top">
-          <Heading as="h2" $type="secondary">
+          <Heading as="h2" $type="heading">
             {getOrignalNmae(seriesNameAfter)}
           </Heading>
           <StyledSelect

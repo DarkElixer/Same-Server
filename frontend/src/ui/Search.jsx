@@ -1,5 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
-import { BiSearch } from "react-icons/bi";
+import { PiMagnifyingGlass } from "react-icons/pi";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styled, { css } from "styled-components";
@@ -7,7 +7,7 @@ import { useDebounce } from "../hooks/useDebounce";
 import { getVodItemBySearch } from "../services/apiVod";
 import { replaceSpecialChars } from "../util/helper";
 
-const SearchIcon = styled(BiSearch)`
+const SearchIcon = styled(PiMagnifyingGlass)`
   height: 4rem;
   width: 4rem;
   cursor: pointer;
@@ -20,16 +20,21 @@ const SearchIcon = styled(BiSearch)`
   }
 `;
 const Input = styled.input`
-  padding: 1rem 1rem;
-  background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.colors.muted};
+  padding: 1rem 1.5rem;
+  background-color: ${({ theme }) => theme.colors.glass};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.pill};
   outline: none;
-  transition: all 0.5s linear;
+  transition: all 0.5s linear, border-color 0.2s ease;
   width: 0;
   opacity: 0;
   color: ${({ theme }) => theme.colors.text};
   font-size: 2rem;
   font-weight: 400;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.accent};
+  }
   @media (max-width: 900px) {
     padding: 0.5rem;
     font-size: 1.5rem;
@@ -73,9 +78,12 @@ const Suggestions = styled.ul`
   width: 60vw;
   max-height: 60vh;
   overflow-y: auto;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.glass};
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.sm};
+  border-radius: ${({ theme }) => theme.radii.md};
+  box-shadow: ${({ theme }) => theme.shadows.card};
   list-style: none;
   z-index: 2000;
 

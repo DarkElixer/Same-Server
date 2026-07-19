@@ -1,16 +1,50 @@
 import { NavLink, useLoaderData } from "react-router-dom";
+import { PiTelevisionFill, PiFilmSlateFill } from "react-icons/pi";
 import { generateToken } from "../../services/apiIptv";
-import { Heading } from "../../ui/Heading";
+import Error from "../../ui/Error";
+import ContinueWatching from "./ContinueWatching";
 
 import styled from "styled-components";
 
 const StyledItem = styled.div`
-  min-height: 50dvh;
-  padding: 1rem;
-  text-align: center;
-  border: 2px solid ${({ theme }) => theme.colors.text};
-  border-radius: ${({ theme }) => theme.radii.md};
-  place-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding: clamp(3rem, 6vw, 5rem) 2rem;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.xl};
+  background-color: ${({ theme }) => theme.colors.glass};
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: ${({ theme }) => theme.shadows.card};
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+
+  svg {
+    font-size: clamp(3.5rem, 5vw, 6rem);
+    color: ${({ theme }) => theme.colors.accent};
+  }
+
+  span {
+    font-size: clamp(1.6rem, 2vw + 1rem, 2.4rem);
+    font-weight: 600;
+    letter-spacing: 0.3rem;
+    text-align: center;
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  &:hover {
+    transform: translateY(-0.4rem);
+    border-color: ${({ theme }) => theme.colors.accent};
+    box-shadow: ${({ theme }) => theme.shadows.glow};
+  }
+
+  @media (max-width: 600px) {
+    &:hover {
+      transform: none;
+    }
+  }
 `;
 
 const Link = styled(NavLink)`
@@ -20,34 +54,40 @@ const Link = styled(NavLink)`
 
 const GridBox = styled.div`
   position: relative;
-  margin: 2rem;
+  max-width: 1800px;
+  margin: 2.4rem auto;
+  padding: 0 var(--page-px);
   display: grid;
-  gap: 5rem;
+  gap: 2.4rem;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   align-items: center;
-  height: calc(100dvh - 150px);
+
+  @media (max-width: 600px) {
+    gap: 1.2rem;
+  }
 `;
 
 function Home() {
   const data = useLoaderData();
   if (data !== undefined) return <Error />;
   return (
-    <GridBox>
-      <Link to="/live/categories">
-        <StyledItem>
-          <Heading as="h1" $type="main" $variation="medium">
-            L I V E
-          </Heading>
-        </StyledItem>
-      </Link>
-      <Link to="/vod/categories">
-        <StyledItem>
-          <Heading as="h1" $type="main" $variation="medium">
-            V O D
-          </Heading>
-        </StyledItem>
-      </Link>
-    </GridBox>
+    <>
+      <ContinueWatching />
+      <GridBox>
+        <Link to="/live/categories">
+          <StyledItem>
+            <PiTelevisionFill />
+            <span>LIVE TV</span>
+          </StyledItem>
+        </Link>
+        <Link to="/vod/categories">
+          <StyledItem>
+            <PiFilmSlateFill />
+            <span>MOVIES & SERIES</span>
+          </StyledItem>
+        </Link>
+      </GridBox>
+    </>
   );
 }
 export async function loader() {

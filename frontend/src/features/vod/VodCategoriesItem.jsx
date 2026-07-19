@@ -11,6 +11,7 @@ import { portal } from "../../constants/servicesConstants";
 import MiniLoader from "../../ui/MiniLoader";
 import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
+import FavoriteButton from "../../ui/FavoriteButton";
 
 function VodCategoriesItem() {
   const { categoryId } = useParams();
@@ -20,7 +21,7 @@ function VodCategoriesItem() {
   return (
     <>
       <div className="header">
-        <Heading as="h2" $type="secondary">
+        <Heading as="h2" $type="heading">
           {getOrignalNmae(categoryId)}
         </Heading>
       </div>
@@ -28,32 +29,36 @@ function VodCategoriesItem() {
         <GridBox>
           {data.pages.map((group, i) => (
             <Fragment key={i}>
-              {group.data.map((series) => (
-                <Box
-                  key={series.id}
-                  to={
-                    series.is_series === "0"
-                      ? `/movie/play/${replaceSpecialChars(series.name)}-${
-                          series.id
-                        }`
-                      : `/series/${replaceSpecialChars(series.name)}-${
-                          series.screenshots
-                        }-${series.id}`
-                  }
-                >
-                  <Image
-                    src={
-                      series.screenshot_uri
-                        ? `${portal}${series.screenshot_uri}`
-                        : "https://cdn.pixabay.com/photo/2020/11/23/06/21/television-5768804_640.png"
-                    }
-                    altText={series.name}
-                  />
-                  <p title={series.name} aria-label={series.name}>
-                    {series.name}
-                  </p>
-                </Box>
-              ))}
+              {group.data.map((series) => {
+                const isMovie = series.is_series === "0";
+                const url = isMovie
+                  ? `/movie/play/${replaceSpecialChars(series.name)}-${
+                      series.id
+                    }`
+                  : `/series/${replaceSpecialChars(series.name)}-${
+                      series.screenshots
+                    }-${series.id}`;
+                const poster = series.screenshot_uri
+                  ? `${portal}${series.screenshot_uri}`
+                  : "https://cdn.pixabay.com/photo/2020/11/23/06/21/television-5768804_640.png";
+                return (
+                  <Box key={series.id} to={url}>
+                    <Image src={poster} altText={series.name} />
+                    <p title={series.name} aria-label={series.name}>
+                      {series.name}
+                    </p>
+                    <FavoriteButton
+                      item={{
+                        id: `vod-${series.id}`,
+                        type: isMovie ? "movie" : "series",
+                        title: series.name,
+                        poster,
+                        url,
+                      }}
+                    />
+                  </Box>
+                );
+              })}
             </Fragment>
           ))}
           {hasNextPage ? (

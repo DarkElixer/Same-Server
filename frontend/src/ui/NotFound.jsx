@@ -42,21 +42,21 @@ const Para = styled.p`
 `;
 
 const StyledLink = styled(Link)`
-  background-color: ${({ theme }) => theme.colors.surfaceLight};
+  background-color: ${({ theme }) => theme.colors.accent};
   border: none;
   border-radius: ${({ theme }) => theme.radii.pill};
   color: ${({ theme }) => theme.colors.textOnLight};
   cursor: pointer;
-  font-family: "Wix Madefor Display", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 1.5vw;
-  font-weight: 400;
+  font-weight: 600;
   margin: 2vh -2vw 1.2vh 8rem;
   outline-offset: -1px;
   transition: background-color 0.3s ease;
   white-space: nowrap;
   padding: 1.5rem 3rem;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.linkHover};
+    background-color: ${({ theme }) => theme.colors.accentHover};
   }
 `;
 function NotFound() {

@@ -11,7 +11,7 @@ const StyledNothingFound = styled.div`
 function NothingFound() {
   return (
     <StyledNothingFound>
-      <Heading as="h1" $type="main" $variation="large">
+      <Heading as="h1" $type="display">
         Nothing Found
       </Heading>
     </StyledNothingFound>

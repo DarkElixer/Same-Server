@@ -4,8 +4,8 @@ import { SkeletonBlock } from "./skeletonStyles";
 const StyledGroupSkeleton = styled.div`
   display: flex;
   gap: 1rem;
-  margin: 0 2rem;
-  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
   overflow: hidden;
 `;
 

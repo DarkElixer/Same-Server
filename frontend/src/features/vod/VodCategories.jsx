@@ -19,7 +19,7 @@ function VodCategories() {
   return (
     <>
       <div className="header">
-        <Heading as="h2" $type="secondary">
+        <Heading as="h2" $type="heading">
           Vod Categories
         </Heading>
       </div>

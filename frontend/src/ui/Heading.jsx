@@ -1,61 +1,36 @@
 import styled, { css } from "styled-components";
 
+// Type scale per DESIGN.md: Display 32/Semibold, Heading 20/Medium, Title 16/Medium.
+// Sizes are fluid (clamp) so they scale with viewport instead of jumping at breakpoints.
 const styles = {
-  main: css`
-    font-weight: 800;
-    background-image: ${({ theme }) => theme.colors.gradientPrimary};
-    color: transparent;
-    background-clip: text;
-    background-size: contain;
-    &:hover {
-      background-image: ${({ theme }) => theme.colors.gradientPrimaryHover};
-    }
-  `,
-  secondary: css`
+  display: css`
+    font-size: clamp(2.2rem, 1.5vw + 1.8rem, 3.2rem);
     font-weight: 600;
-    background-image: ${({ theme }) => theme.colors.gradientPrimary};
-    color: transparent;
-    background-clip: text;
-    background-size: contain;
-    top: 10rem;
-    z-index: 10;
-
-    /*  ------------  */
-    @media (max-width: 900px) {
-      font-size: 2.1vw;
-    }
-    @media (max-width: 450px) {
-      font-size: 2vw;
-    }
+    letter-spacing: 0.04em;
+    color: ${({ theme }) => theme.colors.accent};
+  `,
+  heading: css`
+    font-size: clamp(1.7rem, 0.8vw + 1.4rem, 2rem);
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.text};
+  `,
+  title: css`
+    font-size: clamp(1.4rem, 0.5vw + 1.2rem, 1.6rem);
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.text};
   `,
   error: css`
+    font-size: clamp(1.5rem, 0.8vw + 1.2rem, 1.8rem);
+    font-weight: 500;
     color: ${({ theme }) => theme.colors.text};
-    font-size: 4dvh;
-    font-weight: 100;
     text-align: center;
   `,
 };
-const variation = {
-  large: css`
-    font-size: 8dvw;
-    @media (max-width: 500px) {
-      font-size: 4dvw;
-    }
-  `,
-  medium: css`
-    font-size: 8dvw;
-    @media (max-width: 500px) {
-      font-size: 6rem;
-    }
-  `,
-};
+
 export const Heading = styled.h1`
   margin: 0 1rem;
   display: inline-block;
   line-height: 1.6;
-  background-color: ${({ theme }) => theme.colors.background};
   flex: 1 1 60%;
-  z-index: -1000;
   ${(prop) => styles[prop.$type]}
-  ${(prop) => variation[prop.$variation]}
 `;

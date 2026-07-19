@@ -12,6 +12,7 @@ import MiniLoader from "../../ui/MiniLoader";
 import GridSkeleton from "../../ui/GridSkeleton";
 import { portal } from "../../constants/servicesConstants";
 import Image from "../../ui/Image";
+import FavoriteButton from "../../ui/FavoriteButton";
 
 function LiveChannels() {
   const { categoryId } = useParams();
@@ -24,7 +25,7 @@ function LiveChannels() {
   return (
     <>
       <div className="header">
-        <Heading as="h2" $type="secondary">
+        <Heading as="h2" $type="heading">
           {categoryName}
         </Heading>
       </div>
@@ -47,6 +48,17 @@ function LiveChannels() {
                     src={`${portal}/stalker_portal/misc/logos/320/${series.logo}`}
                   />
                   <p>{series.name}</p>
+                  <FavoriteButton
+                    item={{
+                      id: `live-${series.id}`,
+                      type: "live",
+                      title: series.name,
+                      poster: `${portal}/stalker_portal/misc/logos/320/${series.logo}`,
+                      url: `/live/play/${replaceSpecialChars(
+                        series.name
+                      )}-${getLiveCmdURL(series.cmd)}`,
+                    }}
+                  />
                 </Box>
               ))}
             </Fragment>

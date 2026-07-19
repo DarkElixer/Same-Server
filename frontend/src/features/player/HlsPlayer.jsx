@@ -34,12 +34,23 @@ const QualityMenu = styled.select`
 `;
 
 function HlsPlayer(
-  { src, poster, autoPlay = true, fullscreen = true, onComplete, onPlay, onReady },
+  {
+    src,
+    poster,
+    autoPlay = true,
+    fullscreen = true,
+    initialTime,
+    onComplete,
+    onPlay,
+    onReady,
+    onTimeUpdate,
+  },
   ref
 ) {
   const containerRef = useRef(null);
   const videoRef = useRef(null);
   const hlsRef = useRef(null);
+  const lastReportRef = useRef(0);
   const [levels, setLevels] = useState([]);
   const [currentLevel, setCurrentLevel] = useState(-1);
 
@@ -47,9 +58,23 @@ function HlsPlayer(
 
   useEffect(() => {
     const video = videoRef.current;
+    if (!video || !onTimeUpdate) return;
+    function handleTimeUpdate() {
+      const now = Date.now();
+      if (now - lastReportRef.current < 5000) return;
+      lastReportRef.current = now;
+      onTimeUpdate(video.currentTime, video.duration);
+    }
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    return () => video.removeEventListener("timeupdate", handleTimeUpdate);
+  }, [onTimeUpdate]);
+
+  useEffect(() => {
+    const video = videoRef.current;
     if (!video || !src) return;
 
     function handleReady() {
+      if (initialTime) video.currentTime = initialTime;
       if (autoPlay) video.play().catch(() => {});
       onReady?.(containerRef.current);
     }

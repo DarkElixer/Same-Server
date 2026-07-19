@@ -4,7 +4,7 @@ import { theme } from "../styles/theme";
 const StyledGroup = styled.div`
   display: flex;
   gap: 1rem;
-  margin: 0 2rem;
+  margin-top: 1rem;
   overflow: scroll;
 
   &::-webkit-scrollbar {

@@ -58,7 +58,7 @@ function SeriesSeasonEpisodesList() {
     <>
       <div className="header">
         <div className="top">
-          <Heading as="h2" $type="secondary">
+          <Heading as="h2" $type="heading">
             {categoryName}
           </Heading>
           <StyledSelect

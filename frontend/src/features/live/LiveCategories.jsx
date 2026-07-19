@@ -18,7 +18,7 @@ function LiveCategories() {
   return (
     <>
       <div className="header">
-        <Heading as="h2" $type="secondary">
+        <Heading as="h2" $type="heading">
           Live Categories
         </Heading>
       </div>
