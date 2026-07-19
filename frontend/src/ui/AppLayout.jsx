@@ -15,7 +15,7 @@ const Header = styled.header`
   top: 0;
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   background-color: ${({ theme }) => theme.colors.background};
-  z-index: 1000;
+  z-index: 1500;
   transition: all 0.3s ease;
 `;
 
