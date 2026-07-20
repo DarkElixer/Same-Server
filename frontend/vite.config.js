@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+      },
       // Only precache the app shell (JS/CSS/HTML/icons). Never cache /live, /vod,
       // /authenticate, /profile, /search, or proxied streams — those must always
       // hit the network so live channels, tokens, and playback stay correct.
