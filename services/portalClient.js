@@ -36,7 +36,10 @@ async function requestWithBackoff(fn, { retries = 3, baseDelay = 500 } = {}) {
     } catch (err) {
       const status = err.response?.status;
       if (status !== 429 && status !== 503) {
-        recordResult(false);
+        // Only record circuit breaker failure for 5xx server errors or network failure, not 4xx client/auth errors
+        if (!status || status >= 500) {
+          recordResult(false);
+        }
         throw err;
       }
       recordResult(false);

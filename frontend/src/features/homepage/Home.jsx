@@ -118,7 +118,6 @@ export async function loader() {
   if (!localStorage.token) {
     const data = await generateToken();
     if (data.status === "fail") return data.message;
-    localStorage.token = data.token;
   }
 }
 

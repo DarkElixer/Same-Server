@@ -10,13 +10,21 @@ function statusFor(err) {
   return 401;
 }
 
+function getCleanProxyHeaders(req) {
+  const clean = { ...headers };
+  if (req.headers["range"]) clean["range"] = req.headers["range"];
+  if (req.headers["accept"]) clean["accept"] = req.headers["accept"];
+  if (req.headers["user-agent"]) clean["user-agent"] = req.headers["user-agent"];
+  return clean;
+}
+
 // Proxy segment for live streams
 exports.proxySegment = async (req, res) => {
   try {
     const segmentUrl = decodeURIComponent(req.query.url);
     // Fetch the segment with axios using stream response
     const response = await axios.get(segmentUrl, {
-      headers: req.headers,
+      headers: getCleanProxyHeaders(req),
       responseType: "stream",
     });
 
@@ -44,7 +52,7 @@ exports.proxyMasterPlaylist = async (req, res) => {
 
     // Fetch the master playlist
     const response = await axios.get(originalUrl, {
-      headers: req.headers,
+      headers: getCleanProxyHeaders(req),
       responseType: "text",
     });
 
@@ -92,7 +100,7 @@ exports.proxyTrackPlaylist = async (req, res) => {
 
     // Fetch the track playlist
     const response = await axios.get(originalUrl, {
-      headers: req.headers,
+      headers: getCleanProxyHeaders(req),
       responseType: "text",
     });
 

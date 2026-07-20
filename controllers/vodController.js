@@ -11,12 +11,21 @@ function statusFor(err) {
   if (err.code === "CIRCUIT_OPEN") return 503;
   return 401;
 }
+
+function getCleanProxyHeaders(req) {
+  const clean = { ...headers };
+  if (req.headers["range"]) clean["range"] = req.headers["range"];
+  if (req.headers["accept"]) clean["accept"] = req.headers["accept"];
+  if (req.headers["user-agent"]) clean["user-agent"] = req.headers["user-agent"];
+  return clean;
+}
+
 exports.proxySegment = async (req, res) => {
   try {
     const segmentUrl = decodeURIComponent(req.query.url);
     // Fetch the segment with axios using stream response
     const response = await axios.get(segmentUrl, {
-      headers: req.headers,
+      headers: getCleanProxyHeaders(req),
       responseType: "stream",
     });
 
@@ -50,7 +59,7 @@ exports.proxyHttpStream = async (req, res, next) => {
       "tracks-v1a1/mono.m3u8"
     );
     const response = await axios.get(changedUrlToTrack, {
-      headers: req.headers,
+      headers: getCleanProxyHeaders(req),
       responseType: "text",
     });
 

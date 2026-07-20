@@ -1,19 +1,8 @@
-import { getProfile } from "./apiIptv";
+import { fetchWithAuth } from "./apiIptv";
 
 export const getLiveChannelLink = async (cmd) => {
-  const res = await fetch(`/live/play`, {
-    method: "POST",
-    body: JSON.stringify({
-      cmd,
-      token: localStorage.token,
-    }),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-  const data = await res.json();
+  const data = await fetchWithAuth(`/live/play`, { cmd });
   if (data.status === "fail") {
-    await getProfile();
     throw new Error("Failed to fetch live channel link");
   }
   return data;

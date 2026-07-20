@@ -7,6 +7,7 @@ const liveRouter = require("./router/liveRoutes");
 const vodRouter = require("./router/vodRoutes");
 const authController = require("./controllers/authController");
 const app = express();
+app.set("trust proxy", true);
 app.use(morgan("dev"));
 app.use(express.json());
 
