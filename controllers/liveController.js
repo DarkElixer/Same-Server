@@ -7,6 +7,7 @@ const portal = process.env.portal;
 
 function statusFor(err) {
   if (err.code === "CIRCUIT_OPEN") return 503;
+  if (err.code === "ECONNABORTED" || err.code === "ETIMEDOUT" || err.code === "ENOTFOUND" || err.code === "ECONNREFUSED") return 504;
   return 401;
 }
 
