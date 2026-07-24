@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
+    "postinstall": "cd frontend && npm install && npm run build",
     "dev": "cd frontend && npm run build && cd .. && node --watch server.js",
     "start": "node server.js",
     "prod": "cd frontend && npm run build"

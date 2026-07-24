@@ -18,8 +18,16 @@ app.use(
 );
 
 // serve frontend as static
-
-app.use(express.static(path.join(__dirname, "frontend/dist")));
+app.use(
+  express.static(path.join(__dirname, "frontend/dist"), {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith("sw.js")) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Content-Type", "application/javascript");
+      }
+    },
+  })
+);
 
 // generate token and get profile details to activate the token machanism
 app.use("/authenticate", authController.performHandshake);
@@ -34,6 +42,14 @@ app.use("/live", liveRouter);
 app.use("/vod", vodRouter);
 
 app.get("*", (req, res) => {
+  if (
+    req.path.endsWith(".js") ||
+    req.path.endsWith(".css") ||
+    req.path.endsWith(".json") ||
+    req.path.endsWith(".webmanifest")
+  ) {
+    return res.status(404).send("File not found");
+  }
   res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
 });
 module.exports = app;
