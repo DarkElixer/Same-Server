@@ -34,10 +34,10 @@ export const getMovieLiveLink = async (movieId) => {
   const data = await fetchWithAuth(
     `/vod/play?episodeId=${episodeId}&seriesNumber=${0}`
   );
-  if (data.status === "fail") {
+  if (data.status === "fail" || !data.data) {
     throw new Error("Failed to fetch movie link");
   }
-  return data;
+  return data.data;
 };
 
 // get Series Link
@@ -52,8 +52,8 @@ export const getSeriesLiveLink = async ({
   const data = await fetchWithAuth(
     `/vod/play?episodeId=${finalEpisodeId}&seriesNumber=${seriesNo}`
   );
-  if (data.status === "fail") {
+  if (data.status === "fail" || !data.data) {
     throw new Error("Failed to fetch series link");
   }
-  return data;
+  return data.data;
 };
