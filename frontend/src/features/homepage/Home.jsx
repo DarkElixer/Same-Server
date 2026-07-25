@@ -1,7 +1,7 @@
 import { NavLink, useLoaderData } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { PiTelevisionFill, PiFilmSlateFill } from "react-icons/pi";
-import { generateToken, getAllCategories } from "../../services/apiIptv";
+import { getAllCategories } from "../../services/apiIptv";
 import { replaceSpecialChars } from "../../util/helper";
 import Error from "../../ui/Error";
 import ContinueWatching from "./ContinueWatching";
@@ -114,11 +114,13 @@ function Home() {
     </>
   );
 }
+
 export async function loader() {
-  if (!localStorage.token) {
-    const data = await generateToken();
-    if (data.status === "fail") return data.message;
-  }
+  // Fire-and-forget: warming the server session is not a render dependency, so
+  // don't make every homepage navigation wait on a round trip.
+  fetch("/authenticate").catch((err) => {
+    console.error("[Home loader] Session warm error:", err);
+  });
 }
 
 export default Home;

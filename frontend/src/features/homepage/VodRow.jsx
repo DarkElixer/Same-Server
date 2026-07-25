@@ -52,7 +52,9 @@ function VodRow({ title, categoryId, viewAllLink }) {
   const { data, isError } = useQuery({
     queryKey: ["vodRow", categoryId],
     queryFn: () => getAllCategoriesChannel("vod", categoryId, 1),
-    staleTime: 3 * 60 * 1000,
+    // matches the server's CACHE_TTL.listings — refetching sooner can only
+    // return the same cached bytes
+    staleTime: 30 * 60 * 1000,
   });
 
   const items = data?.data ?? [];

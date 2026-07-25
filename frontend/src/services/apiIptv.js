@@ -1,20 +1,7 @@
-export const generateToken = async () => {
-  const res = await fetch(`/authenticate`);
-  const data = await res.json();
-  if (data.status === "success" && data.token) {
-    localStorage.token = data.token;
-  }
-  return data;
-};
-
-export const fetchWithAuth = async (endpoint, bodyData = {}, retry = true) => {
-  if (!localStorage.token) {
-    await generateToken();
-  }
-
+export const fetchWithAuth = async (endpoint, bodyData = {}) => {
   const res = await fetch(endpoint, {
     method: "POST",
-    body: JSON.stringify({ ...bodyData, token: localStorage.token }),
+    body: JSON.stringify(bodyData),
     headers: {
       "Content-type": "application/json",
     },
@@ -25,13 +12,6 @@ export const fetchWithAuth = async (endpoint, bodyData = {}, retry = true) => {
     data = await res.json();
   } catch (err) {
     data = { status: "fail", message: err.message };
-  }
-
-  if ((!res.ok || data.status === "fail") && retry) {
-    const authData = await generateToken();
-    if (authData.status === "success") {
-      return fetchWithAuth(endpoint, bodyData, false);
-    }
   }
 
   return data;

@@ -28,11 +28,20 @@ export const getSeriesOrMovie = async ({
 };
 
 // get movie link
-export const getMovieLiveLink = async (movieId) => {
-  const movieData = await getSeriesOrMovie({ movieId });
-  const episodeId = movieData.data[0].id;
+// NOTE: /vod/play needs the *file* id (used as /media/file_<id>.mpg), which is a
+// different id space from movieId and from the route's episodeId. Only pass
+// fileId here if it came from a listing's `id` field.
+export const getMovieLiveLink = async (movieId, fileId = null) => {
+  let targetEpisodeId = fileId;
+  if (!targetEpisodeId) {
+    const movieData = await getSeriesOrMovie({ movieId });
+    targetEpisodeId = movieData?.data?.[0]?.id;
+  }
+  if (!targetEpisodeId) {
+    throw new Error("Failed to resolve movie file id");
+  }
   const data = await fetchWithAuth(
-    `/vod/play?episodeId=${episodeId}&seriesNumber=${0}`
+    `/vod/play?episodeId=${targetEpisodeId}&seriesNumber=${0}`
   );
   if (data.status === "fail" || !data.data) {
     throw new Error("Failed to fetch movie link");
@@ -47,10 +56,16 @@ export const getSeriesLiveLink = async ({
   episodeId,
   seriesNo,
 }) => {
+  // episodeId is the episode *record* id used to filter the list; the id that
+  // /vod/play needs is the file id on the returned item (e.g. 2972958 -> 3359771).
+  // This lookup is a translation, not a redundant fetch — do not skip it.
   const movieData = await getSeriesOrMovie({ movieId, seasonId, episodeId });
-  const finalEpisodeId = movieData.data[0].id;
+  const targetEpisodeId = movieData?.data?.[0]?.id;
+  if (!targetEpisodeId) {
+    throw new Error("Failed to resolve episode file id");
+  }
   const data = await fetchWithAuth(
-    `/vod/play?episodeId=${finalEpisodeId}&seriesNumber=${seriesNo}`
+    `/vod/play?episodeId=${targetEpisodeId}&seriesNumber=${seriesNo}`
   );
   if (data.status === "fail" || !data.data) {
     throw new Error("Failed to fetch series link");

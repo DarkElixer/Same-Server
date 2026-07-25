@@ -1,11 +1,17 @@
 const axios = require("axios");
+const http = require("http");
+const https = require("https");
 
-const CACHE_TTL_DEFAULT = 5 * 60 * 1000;
+const agentOpts = { keepAlive: true, maxSockets: 64, maxFreeSockets: 16 };
+const httpAgent = new http.Agent(agentOpts);
+const httpsAgent = new https.Agent(agentOpts);
+
+const CACHE_MAX_ENTRIES = 500;
 const cache = new Map(); // cacheKey -> { data, expires }
 const inflight = new Map(); // cacheKey -> Promise (in-flight de-dupe / single-flight)
 
-// ponytail: single shared breaker for the one upstream portal host, per-host breakers if multi-portal ever happens
-const breaker = { failures: 0, threshold: 5, openUntil: 0, cooldownMs: 15000 };
+// ponytail: single shared breaker for the one upstream portal host
+const breaker = { failures: 0, authFailures: 0, threshold: 5, openUntil: 0, cooldownMs: 15000 };
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -25,6 +31,34 @@ function recordResult(ok) {
     breaker.openUntil = Date.now() + breaker.cooldownMs;
     breaker.failures = 0;
     console.warn(`[portalClient] Circuit breaker OPENED for ${breaker.cooldownMs}ms due to repeated failures.`);
+  }
+}
+
+function isEmptyResponse(data) {
+  return data === undefined || data === null || data === "";
+}
+
+// An empty body is NOT treated as an auth failure: a false positive here costs a
+// full re-handshake (a new portal session for this MAC), so empty responses are
+// surfaced as transient upstream errors instead.
+function isAuthFailure(data) {
+  if (isEmptyResponse(data)) return false;
+  if (data === "Authorization failed.") return true;
+  if (typeof data === "string") return !data.trim().startsWith("{"); // HTML error page
+  if (data.js === false) return true;
+  return false;
+}
+
+function recordAuthResult(data) {
+  if (isAuthFailure(data)) {
+    breaker.authFailures += 1;
+    if (breaker.authFailures >= 10) {
+      breaker.openUntil = Date.now() + breaker.cooldownMs;
+      breaker.authFailures = 0;
+      console.warn(`[portalClient] Circuit breaker OPENED for ${breaker.cooldownMs}ms due to repeated auth failures.`);
+    }
+  } else {
+    breaker.authFailures = 0;
   }
 }
 
@@ -58,12 +92,12 @@ async function requestWithBackoff(fn, { retries = 3, baseDelay = 500 } = {}) {
 
 /**
  * Fetch a stalker-portal URL through backoff + circuit breaker + optional
- * cache/coalescing. Pass cacheKey (no ttl) to only coalesce concurrent
- * identical requests (e.g. handshake); pass cacheKey + ttl to also cache
- * the result across calls (e.g. genres/categories).
+ * cache/coalescing.
  */
 async function portalRequest(url, { headers, cacheKey, ttl, shouldCache, timeout = 8000 } = {}) {
-  console.log(`[portalRequest] Called for URL: ${url} (cacheKey: ${cacheKey || 'none'})`);
+  const actionMatch = String(url).match(/[?&]action=([^&]+)/);
+  const actionStr = actionMatch ? actionMatch[1] : String(url).split("?")[0];
+  console.log(`[portalRequest] Called for action: ${actionStr} (cacheKey: ${cacheKey || 'none'})`);
   if (cacheKey) {
     const hit = cache.get(cacheKey);
     if (hit && hit.expires > Date.now()) {
@@ -83,12 +117,25 @@ async function portalRequest(url, { headers, cacheKey, ttl, shouldCache, timeout
     throw err;
   }
 
-  const exec = requestWithBackoff(() => axios(url, { headers, timeout }))
+  const exec = requestWithBackoff(() => axios(url, { headers, timeout, httpAgent, httpsAgent }))
     .then((response) => {
       const data = response.data;
       console.log(`[portalRequest] Received response data type: ${typeof data}`);
-      if (cacheKey && (!shouldCache || shouldCache(data))) {
-        cache.set(cacheKey, { data, expires: Date.now() + (ttl || 0) });
+      if (isEmptyResponse(data)) {
+        recordResult(false); // a 200 with no body is a broken upstream, not an auth problem
+        const err = new Error("Empty response from portal");
+        err.code = "EMPTY_RESPONSE";
+        throw err;
+      }
+      recordAuthResult(data);
+      if (cacheKey && ttl && !isAuthFailure(data) && (!shouldCache || shouldCache(data))) {
+        if (cache.has(cacheKey)) {
+          cache.delete(cacheKey);
+        } else if (cache.size >= CACHE_MAX_ENTRIES) {
+          const oldestKey = cache.keys().next().value;
+          if (oldestKey !== undefined) cache.delete(oldestKey);
+        }
+        cache.set(cacheKey, { data, expires: Date.now() + ttl });
       }
       return data;
     })
@@ -100,4 +147,11 @@ async function portalRequest(url, { headers, cacheKey, ttl, shouldCache, timeout
   return exec;
 }
 
-module.exports = { portalRequest, requestWithBackoff, isBreakerOpen };
+module.exports = {
+  portalRequest,
+  requestWithBackoff,
+  isBreakerOpen,
+  isAuthFailure,
+  httpAgent,
+  httpsAgent,
+};

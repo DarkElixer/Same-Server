@@ -21,12 +21,16 @@ import SeriesSeasonEpisodesList from "./features/series/SeriesSeasonEpisodesList
 import SeriesPlayer from "./features/series/SeriesPlayer";
 import MyList from "./features/mylist/MyList";
 
+if (typeof window !== "undefined" && window.localStorage) {
+  localStorage.removeItem("token");
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       gcTime: 24 * 60 * 60 * 1000,
       staleTime: Infinity,
-      retry: 3,
+      retry: 1,
       retryDelay: (attempt) =>
         Math.min(1000 * 2 ** attempt, 10000) + Math.random() * 300,
     },
