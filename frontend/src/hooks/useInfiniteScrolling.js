@@ -23,7 +23,7 @@ function useInfiniteScrolling(type, query, callback) {
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage]);
-  return { ref, data, isFetchingNextPage, status, hasNextPage };
+  return { ref, data, isFetchingNextPage, status, hasNextPage, fetchNextPage };
 }
 
 export { useInfiniteScrolling };
