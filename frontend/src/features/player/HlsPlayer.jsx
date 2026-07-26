@@ -595,10 +595,17 @@ function HlsPlayer(
     }
 
     if (Hls.isSupported()) {
+      const isLiveSrc = src.includes("live");
       const hls = new Hls({
-        maxBufferHole: 3,
-        maxBufferLength: 12,
-        lowLatencyMode: true,
+        lowLatencyMode: isLiveSrc,
+        maxBufferLength: isLiveSrc ? 12 : 30,
+        maxMaxBufferLength: isLiveSrc ? 20 : 60,
+        backBufferLength: 30,
+        capLevelToPlayerSize: true,
+        abrEwmaDefaultEstimate: 500000,
+        fragLoadingMaxRetry: 6,
+        manifestLoadingMaxRetry: 4,
+        levelLoadingMaxRetry: 4,
       });
       hlsRef.current = hls;
       hls.loadSource(src);
