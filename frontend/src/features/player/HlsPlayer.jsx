@@ -21,6 +21,8 @@ import {
   PiArrowLeft,
   PiWarningCircleFill,
   PiArrowClockwise,
+  PiRewindFill,
+  PiFastForwardFill,
 } from "react-icons/pi";
 
 const HIDE_DELAY = 3000;
@@ -461,6 +463,63 @@ function HlsPlayer(
   }, []);
 
   useEffect(() => {
+    function handleKeyDown(e) {
+      const activeEl = document.activeElement;
+      if (
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.tagName === "SELECT" ||
+          activeEl.isContentEditable)
+      ) {
+        return;
+      }
+
+      const key = e.key;
+      const code = e.code;
+
+      let handled = false;
+
+      if (code === "Space" || key === " " || code === "KeyK" || key === "k" || key === "K") {
+        togglePlay();
+        handled = true;
+      } else if (code === "ArrowLeft" || code === "KeyJ" || key === "j" || key === "J") {
+        if (!isLive) {
+          handleSkip(-10);
+        }
+        handled = true;
+      } else if (code === "ArrowRight" || code === "KeyL" || key === "l" || key === "L") {
+        if (!isLive) {
+          handleSkip(10);
+        }
+        handled = true;
+      } else if (code === "ArrowUp") {
+        changeVolume(0.1);
+        handled = true;
+      } else if (code === "ArrowDown") {
+        changeVolume(-0.1);
+        handled = true;
+      } else if (code === "KeyM" || key === "m" || key === "M") {
+        toggleMute();
+        handled = true;
+      } else if (code === "KeyF" || key === "f" || key === "F") {
+        toggleFullscreen();
+        handled = true;
+      }
+
+      if (handled) {
+        e.preventDefault();
+        handleActivity();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isLive, handleActivity]);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
@@ -589,6 +648,27 @@ function HlsPlayer(
     else video.pause();
   }
 
+  function handleSkip(seconds) {
+    const video = videoRef.current;
+    if (!video || isLive) return;
+    const dur = video.duration || duration;
+    if (isFinite(dur) && dur > 0) {
+      video.currentTime = Math.min(dur, Math.max(0, video.currentTime + seconds));
+    } else {
+      video.currentTime = Math.max(0, video.currentTime + seconds);
+    }
+  }
+
+  function changeVolume(delta) {
+    const video = videoRef.current;
+    if (!video) return;
+    const newVol = Math.min(1, Math.max(0, video.volume + delta));
+    video.volume = newVol;
+    if (newVol > 0 && video.muted) {
+      video.muted = false;
+    }
+  }
+
   function handleScrub(e) {
     const video = videoRef.current;
     if (!video || isLive || !isFinite(duration)) return;
@@ -711,9 +791,19 @@ function HlsPlayer(
             </ScrubTrack>
           )}
           <ButtonsRow>
+            {!isLive && (
+              <IconButton onClick={() => handleSkip(-10)} aria-label="Rewind 10 seconds">
+                <PiRewindFill />
+              </IconButton>
+            )}
             <IconButton onClick={togglePlay} aria-label={isPlaying ? "Pause" : "Play"}>
               {isPlaying ? <PiPauseFill /> : <PiPlayFill />}
             </IconButton>
+            {!isLive && (
+              <IconButton onClick={() => handleSkip(10)} aria-label="Forward 10 seconds">
+                <PiFastForwardFill />
+              </IconButton>
+            )}
             <VolumeGroup>
               <IconButton onClick={toggleMute} aria-label={muted ? "Unmute" : "Mute"}>
                 <VolumeIcon />
