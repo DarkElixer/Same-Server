@@ -34,20 +34,22 @@ a,a:link{
  text-decoration: none;
 }
 
-.header{
+.header {
     background-color: ${({ theme }) => theme.colors.glass};
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid ${({ theme }) => theme.colors.border};
     position: sticky;
-    top: 5.5rem;
+    top: var(--app-header-top, 6rem);
     z-index: 1000;
-    padding: 1.6rem var(--page-px) 1.2rem;
+    padding: 1.2rem var(--page-px) 1rem;
     display: flex;
     flex-direction: column;
+    gap: 0.8rem;
+    transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
 }
 
-.top{
+.top {
     flex: 1;
     display: flex;
     justify-content: space-between;
@@ -55,14 +57,15 @@ a,a:link{
 }
 
 @media (max-width: 768px) {
-    .top{
-        flex-direction: column;
-        align-items: start;
-        gap: 0.8rem;
-
-        & > {
-        flex: 1;
-        }
+    .header {
+        padding: 0.8rem var(--page-px);
+        gap: 0.6rem;
+    }
+    .top {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
     }
 }
 #nothing__found{

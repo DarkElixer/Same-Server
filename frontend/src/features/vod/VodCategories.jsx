@@ -7,6 +7,7 @@ import { Box } from "../../ui/Box";
 
 import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
+import PageHeader from "../../ui/PageHeader";
 
 function VodCategories() {
   const { isLoading, data } = useQuery({
@@ -18,11 +19,13 @@ function VodCategories() {
   console.log(data.sort((a, b) => (a.title < b.title ? -1 : 1)));
   return (
     <>
-      <div className="header">
-        <Heading as="h2" $type="heading">
-          Vod Categories
-        </Heading>
-      </div>
+      <PageHeader>
+        <div className="top">
+          <Heading as="h2" $type="heading">
+            Vod Categories
+          </Heading>
+        </div>
+      </PageHeader>
       <GridBox>
         {data?.map((genre) => {
           if (genre.title === "All") return null;

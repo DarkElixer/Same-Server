@@ -1,20 +1,25 @@
 import styled from "styled-components";
 
 const StyledSelect = styled.select`
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.05);
   color: ${({ theme }) => theme.colors.accent};
-  appearance: base-select;
+  border: 1px solid ${({ theme }) => theme.colors.accent};
+  border-radius: ${({ theme }) => theme.radii.sm || "6px"};
   padding: 0.5rem 1rem;
-  margin: 1rem 0.5rem;
-  border-radius: ${({ theme }) => theme.radii.none};
-  @media screen and (max-width: 900px) {
-    padding: 1rem;
-    font-size: 2.1vw;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  @media (max-width: 600px) {
+    padding: 0.4rem 0.8rem;
+    font-size: 1.2rem;
   }
+
   option {
     color: ${({ theme }) => theme.colors.text};
     background-color: ${({ theme }) => theme.colors.background};
-    border-radius: ${({ theme }) => theme.radii.none};
   }
 `;
 

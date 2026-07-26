@@ -17,6 +17,8 @@ import Group from "../../ui/Group";
 import GroupSkeleton from "../../ui/GroupSkeleton";
 import GridSkeleton from "../../ui/GridSkeleton";
 
+import PageHeader from "../../ui/PageHeader";
+
 function SeriesSeasonEpisodesList() {
   const total_items = useRef(0);
   const { seriesName, seasonNo } = useParams();
@@ -56,7 +58,7 @@ function SeriesSeasonEpisodesList() {
     getOrignalNmae(seriesNameAfter) + " " + getOrignalNmae(seasonNo);
   return (
     <>
-      <div className="header">
+      <PageHeader>
         <div className="top">
           <Heading as="h2" $type="heading">
             {categoryName}
@@ -83,7 +85,7 @@ function SeriesSeasonEpisodesList() {
             />
           )
         )}
-      </div>
+      </PageHeader>
       {status === "pending" && !data ? (
         <GridSkeleton />
       ) : status !== "error" ? (

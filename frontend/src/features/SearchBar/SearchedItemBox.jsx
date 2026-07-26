@@ -15,6 +15,7 @@ import GridSkeleton from "../../ui/GridSkeleton";
 import { portal } from "../../constants/servicesConstants";
 import Image from "../../ui/Image";
 import FavoriteButton from "../../ui/FavoriteButton";
+import PageHeader from "../../ui/PageHeader";
 
 const FilterBar = styled.div`
   display: flex;
@@ -67,10 +68,12 @@ function SearchedItemBox() {
   const total_items = +data.pages[0].total_items;
   return (
     <>
-      <div className="header">
-        <Heading as="h2" $type="title">
-          {`Showing Results for: ${query}`}
-        </Heading>
+      <PageHeader>
+        <div className="top">
+          <Heading as="h2" $type="title">
+            {`Showing Results for: ${query}`}
+          </Heading>
+        </div>
         {total_items !== 0 && (
           <FilterBar>
             {FILTERS.map((f) => (
@@ -84,7 +87,7 @@ function SearchedItemBox() {
             ))}
           </FilterBar>
         )}
-      </div>
+      </PageHeader>
       {total_items !== 0 ? (
         <GridBox>
           {data.pages.map((group, i) => (

@@ -7,6 +7,7 @@ import { portal } from "../../constants/servicesConstants";
 import { Heading } from "../../ui/Heading";
 import Image from "../../ui/Image";
 import FavoriteButton from "../../ui/FavoriteButton";
+import VodRowSkeleton from "./VodRowSkeleton";
 import { Wrapper, RowHeader, ViewAllLink, Row } from "./homeRowStyles";
 
 const PLACEHOLDER =
@@ -49,13 +50,15 @@ const PosterLink = styled(Link)`
 `;
 
 function VodRow({ title, categoryId, viewAllLink }) {
-  const { data, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["vodRow", categoryId],
     queryFn: () => getAllCategoriesChannel("vod", categoryId, 1),
     // matches the server's CACHE_TTL.listings — refetching sooner can only
     // return the same cached bytes
     staleTime: 30 * 60 * 1000,
   });
+
+  if (isLoading) return <VodRowSkeleton />;
 
   const items = data?.data ?? [];
   if (isError || items.length === 0) return null;

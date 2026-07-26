@@ -7,6 +7,7 @@ import { Box } from "../../ui/Box";
 
 import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
+import PageHeader from "../../ui/PageHeader";
 
 function LiveCategories() {
   const { isLoading, data } = useQuery({
@@ -17,11 +18,13 @@ function LiveCategories() {
   if (isLoading) return <GridSkeleton />;
   return (
     <>
-      <div className="header">
-        <Heading as="h2" $type="heading">
-          Live Categories
-        </Heading>
-      </div>
+      <PageHeader>
+        <div className="top">
+          <Heading as="h2" $type="heading">
+            Live Categories
+          </Heading>
+        </div>
+      </PageHeader>
       <GridBox>
         {data?.map((genre) => {
           if (genre.title === "All") return null;

@@ -6,6 +6,7 @@ import { Box } from "../../ui/Box";
 import Image from "../../ui/Image";
 import FavoriteButton from "../../ui/FavoriteButton";
 import NothingFound from "../SearchBar/NothingFound";
+import PageHeader from "../../ui/PageHeader";
 
 function MyList() {
   const [items, setItems] = useState([]);
@@ -20,11 +21,13 @@ function MyList() {
 
   return (
     <>
-      <div className="header">
-        <Heading as="h2" $type="heading">
-          My List
-        </Heading>
-      </div>
+      <PageHeader>
+        <div className="top">
+          <Heading as="h2" $type="heading">
+            My List
+          </Heading>
+        </div>
+      </PageHeader>
       {items.length === 0 ? (
         <NothingFound />
       ) : (

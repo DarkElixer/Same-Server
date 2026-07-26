@@ -8,7 +8,7 @@ import GridSkeleton from "../../ui/GridSkeleton";
 import { portal } from "../../constants/servicesConstants";
 import Image from "../../ui/Image";
 import FavoriteButton from "../../ui/FavoriteButton";
-import VirtualizedGrid from "../../ui/VirtualizedGrid";
+import PageHeader from "../../ui/PageHeader";
 
 function renderChannel(series) {
   const url = `/live/play/${replaceSpecialChars(series.name)}-${getLiveCmdURL(
@@ -42,11 +42,13 @@ function LiveChannels() {
     " LIVE CHANNELS";
   return (
     <>
-      <div className="header">
-        <Heading as="h2" $type="heading">
-          {categoryName}
-        </Heading>
-      </div>
+      <PageHeader>
+        <div className="top">
+          <Heading as="h2" $type="heading">
+            {categoryName}
+          </Heading>
+        </div>
+      </PageHeader>
       {status !== "pending" && status !== "error" ? (
         <VirtualizedGrid
           items={data.pages.flatMap((group) => group.data)}

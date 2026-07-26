@@ -7,6 +7,7 @@ import Error from "../../ui/Error";
 import ContinueWatching from "./ContinueWatching";
 import MyListPreview from "./MyListPreview";
 import VodRow from "./VodRow";
+import VodRowSkeleton from "./VodRowSkeleton";
 
 const GENRE_ROW_LIMIT = 5;
 
@@ -75,7 +76,7 @@ const GridBox = styled.div`
 
 function Home() {
   const data = useLoaderData();
-  const { data: vodGenres } = useQuery({
+  const { data: vodGenres, isLoading } = useQuery({
     queryKey: ["vodCategories"],
     queryFn: () => getAllCategories("vod"),
     staleTime: Infinity,
@@ -89,14 +90,22 @@ function Home() {
       <ContinueWatching />
       <MyListPreview />
       <VodRow title="Newly Added" categoryId="*" />
-      {genreRows.map((genre) => (
-        <VodRow
-          key={genre.id}
-          title={genre.title}
-          categoryId={genre.id}
-          viewAllLink={`/vod/categories/${replaceSpecialChars(genre.title)}-${genre.id}`}
-        />
-      ))}
+      {isLoading ? (
+        <>
+          <VodRowSkeleton count={8} />
+          <VodRowSkeleton count={8} />
+          <VodRowSkeleton count={8} />
+        </>
+      ) : (
+        genreRows.map((genre) => (
+          <VodRow
+            key={genre.id}
+            title={genre.title}
+            categoryId={genre.id}
+            viewAllLink={`/vod/categories/${replaceSpecialChars(genre.title)}-${genre.id}`}
+          />
+        ))
+      )}
       <GridBox>
         <Link to="/live/categories">
           <StyledItem>

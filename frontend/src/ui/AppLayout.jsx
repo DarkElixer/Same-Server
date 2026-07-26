@@ -5,6 +5,7 @@ import { Heading } from "./Heading";
 import Loader from "./Loader";
 import Search from "./Search";
 import { useEffect, useState } from "react";
+import { useScrollDirection } from "../hooks/useScrollDirection";
 
 const Header = styled.header`
   display: flex;
@@ -19,7 +20,8 @@ const Header = styled.header`
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 1500;
-  transition: all 0.3s ease;
+  transform: translateY(${({ $hidden }) => ($hidden ? "-100%" : "0")});
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (max-width: 600px) {
     height: 5.5rem;
@@ -67,7 +69,11 @@ const MyListLink = styled(NavLink)`
 function AppLayout() {
   const navigation = useNavigation();
   const [isMobile, setIsMobile] = useState(false);
+  const { scrollDirection, isScrolled } = useScrollDirection({ collapseThreshold: 50, threshold: 15 });
   const loading = navigation.state === "loading";
+
+  const isHidden = isScrolled && scrollDirection === "down";
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -78,9 +84,19 @@ function AppLayout() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    const headerTop = isHidden
+      ? "0px"
+      : isMobile
+      ? "5.5rem"
+      : "6rem";
+    document.documentElement.style.setProperty("--app-header-top", headerTop);
+  }, [isHidden, isMobile]);
+
   return (
     <>
-      <Header>
+      <Header $hidden={isHidden}>
         <NavLink to="/">
           <LogoContainer>
             {!isMobile ? (

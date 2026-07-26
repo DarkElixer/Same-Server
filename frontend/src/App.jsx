@@ -7,6 +7,7 @@ import VodCategoriesItem from "./features/vod/VodCategoriesItem";
 import LiveCategories from "./features/live/LiveCategories";
 import VodCategories from "./features/vod/VodCategories";
 import Home, { loader } from "./features/homepage/Home";
+import HomeSkeleton from "./features/homepage/HomeSkeleton";
 import GlobalStyles from "./styles/GlobalStyles";
 import AppLayout from "./ui/AppLayout";
 import LiveChannels from "./features/live/LiveChannels";
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
-        hydrateFallbackElement: <Loader />,
+        hydrateFallbackElement: <HomeSkeleton />,
         loader,
       },
       {

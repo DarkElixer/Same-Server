@@ -9,6 +9,7 @@ import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
 import FavoriteButton from "../../ui/FavoriteButton";
 import VirtualizedGrid from "../../ui/VirtualizedGrid";
+import PageHeader from "../../ui/PageHeader";
 
 function renderSeries(series) {
   const isMovie = series.is_series === "0";
@@ -46,11 +47,13 @@ function VodCategoriesItem() {
     useInfiniteScrolling("vod", categoryIdFromURL, getAllCategoriesChannel);
   return (
     <>
-      <div className="header">
-        <Heading as="h2" $type="heading">
-          {getOrignalNmae(categoryId)}
-        </Heading>
-      </div>
+      <PageHeader>
+        <div className="top">
+          <Heading as="h2" $type="heading">
+            {getOrignalNmae(categoryId)}
+          </Heading>
+        </div>
+      </PageHeader>
       {status !== "pending" && status !== "error" ? (
         <VirtualizedGrid
           items={data.pages.flatMap((group) => group.data)}

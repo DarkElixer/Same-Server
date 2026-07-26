@@ -13,6 +13,7 @@ import MiniLoader from "../../ui/MiniLoader";
 import StyledSelect from "../../ui/Select";
 import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
+import PageHeader from "../../ui/PageHeader";
 
 function SeriesSeasonsList() {
   const total_items = useRef(0);
@@ -35,7 +36,7 @@ function SeriesSeasonsList() {
   }
   return (
     <>
-      <div className="header">
+      <PageHeader>
         <div className="top">
           <Heading as="h2" $type="heading">
             {getOrignalNmae(seriesNameAfter)}
@@ -48,7 +49,7 @@ function SeriesSeasonsList() {
             <option value="name-asc">Sort By Season Number</option>
           </StyledSelect>
         </div>
-      </div>
+      </PageHeader>
       {status !== "pending" && status !== "error" ? (
         <GridBox>
           {data.pages.map((group, i) => (

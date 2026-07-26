@@ -3,20 +3,28 @@ import { theme } from "../styles/theme";
 
 const StyledGroup = styled.div`
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  overflow: scroll;
+  gap: 0.8rem;
+  margin-top: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
 
   &::-webkit-scrollbar {
     display: none;
   }
   & span {
     border: 1px solid ${({ theme }) => theme.colors.accent};
-    border-radius: ${({ theme }) => theme.radii.md};
-    padding: 0.3rem 1.3vh;
+    border-radius: ${({ theme }) => theme.radii.pill || "9999px"};
+    padding: 0.4rem 1.2rem;
+    font-size: 1.3rem;
     font-weight: 600;
     flex: 0 0 fit-content;
-    transition: background 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+
+    @media (max-width: 600px) {
+      padding: 0.35rem 1rem;
+      font-size: 1.2rem;
+    }
     &:hover {
       background-color: ${({ theme }) => theme.colors.accentHover};
       cursor: pointer;
