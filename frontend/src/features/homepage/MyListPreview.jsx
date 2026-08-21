@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { getFavorites } from "../../util/favorites";
 import { Heading } from "../../ui/Heading";
@@ -6,6 +7,13 @@ import Image from "../../ui/Image";
 import { Wrapper, RowHeader, ViewAllLink, Row, Card, CardLink, Title } from "./homeRowStyles";
 
 const PREVIEW_LIMIT = 10;
+
+const Scrim = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(7, 7, 15, 0.88), transparent 55%);
+`;
 
 function MyListPreview() {
   const [items, setItems] = useState([]);
@@ -33,6 +41,7 @@ function MyListPreview() {
           <Card key={item.id}>
             <CardLink to={item.url}>
               <Image src={item.poster} altText={item.title} />
+              <Scrim />
               <Title>{item.title}</Title>
             </CardLink>
             <FavoriteButton item={item} onToggle={handleToggle} />

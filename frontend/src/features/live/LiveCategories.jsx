@@ -1,6 +1,7 @@
 import { getAllCategories } from "../../services/apiIptv";
 import { replaceSpecialChars } from "../../util/helper";
 import { useQuery } from "@tanstack/react-query";
+import styled from "styled-components";
 import { Heading } from "../../ui/Heading";
 import { GridBox } from "../../ui/GridBox";
 import { Box } from "../../ui/Box";
@@ -8,6 +9,11 @@ import { Box } from "../../ui/Box";
 import GridSkeleton from "../../ui/GridSkeleton";
 import Image from "../../ui/Image";
 import PageHeader from "../../ui/PageHeader";
+import { eyebrow } from "../../styles/mixins";
+
+const Eyebrow = styled.span`
+  ${eyebrow}
+`;
 
 function LiveCategories() {
   const { isLoading, data } = useQuery({
@@ -20,9 +26,12 @@ function LiveCategories() {
     <>
       <PageHeader>
         <div className="top">
-          <Heading as="h2" $type="heading">
-            Live Categories
-          </Heading>
+          <div>
+            <Eyebrow>LIVE TV</Eyebrow>
+            <Heading as="h2" $type="heading">
+              Categories
+            </Heading>
+          </div>
         </div>
       </PageHeader>
       <GridBox>

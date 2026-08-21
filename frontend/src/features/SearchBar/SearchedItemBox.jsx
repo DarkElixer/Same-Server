@@ -16,11 +16,12 @@ import { portal } from "../../constants/servicesConstants";
 import Image from "../../ui/Image";
 import FavoriteButton from "../../ui/FavoriteButton";
 import PageHeader from "../../ui/PageHeader";
+import { pill, pillOn } from "../../styles/mixins";
 
 const FilterBar = styled.div`
   display: flex;
-  gap: 1rem;
-  margin: 0 0 1rem;
+  gap: 0.8rem;
+  margin: 1rem 0 0;
   overflow-x: auto;
 
   &::-webkit-scrollbar {
@@ -29,21 +30,9 @@ const FilterBar = styled.div`
 `;
 
 const FilterButton = styled.button`
-  padding: 0.5rem 1.5rem;
-  border-radius: ${({ theme }) => theme.radii.pill};
-  border: 1px solid ${({ theme }) => theme.colors.accent};
-  background: ${({ $active, theme }) =>
-    $active ? theme.colors.accent : "transparent"};
-  color: ${({ $active, theme }) =>
-    $active ? theme.colors.textOnLight : theme.colors.text};
-  cursor: pointer;
-  font-weight: 600;
-  flex: 0 0 fit-content;
-
-  @media (max-width: 600px) {
-    padding: 0.5rem 1.2rem;
-    font-size: 1.3rem;
-  }
+  ${pill}
+  ${({ $active }) => $active && pillOn}
+  flex: none;
 `;
 
 const FILTERS = [
@@ -129,7 +118,7 @@ function SearchedItemBox() {
           ) : null}
         </GridBox>
       ) : (
-        <NothingFound />
+        <NothingFound message={`No results for "${query}".`} />
       )}
     </>
   );

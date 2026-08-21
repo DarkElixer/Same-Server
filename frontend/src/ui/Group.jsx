@@ -12,23 +12,25 @@ const StyledGroup = styled.div`
     display: none;
   }
   & span {
-    border: 1px solid ${({ theme }) => theme.colors.accent};
-    border-radius: ${({ theme }) => theme.radii.pill || "9999px"};
+    border: 1px solid ${({ theme }) => theme.colors.border};
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: ${({ theme }) => theme.radii.pill};
     padding: 0.4rem 1.2rem;
     font-size: 1.3rem;
     font-weight: 600;
+    color: ${({ theme }) => theme.colors.text};
     flex: 0 0 fit-content;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 
     @media (max-width: 600px) {
       padding: 0.35rem 1rem;
       font-size: 1.2rem;
     }
     &:hover {
-      background-color: ${({ theme }) => theme.colors.accentHover};
+      background: rgba(255, 255, 255, 0.12);
       cursor: pointer;
-      color: ${({ theme }) => theme.colors.textOnLight};
+      color: #fff;
     }
   }
 `;
@@ -86,8 +88,9 @@ function EpisodeRange({
   return (
     <span
       style={{
-        backgroundColor: isSelected ? theme.colors.accent : "transparent",
-        color: isSelected ? theme.colors.textOnLight : "inherit",
+        background: isSelected ? theme.colors.gradientBar : "transparent",
+        borderColor: isSelected ? theme.colors.accentSoft : theme.colors.border,
+        color: isSelected ? "#fff" : "inherit",
       }}
       onClick={handleClick}
     >

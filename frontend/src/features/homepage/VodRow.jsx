@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { getAllCategoriesChannel } from "../../services/apiIptv";
 import { replaceSpecialChars } from "../../util/helper";
 import { portal } from "../../constants/servicesConstants";
+import { tile } from "../../styles/mixins";
 import { Heading } from "../../ui/Heading";
 import Image from "../../ui/Image";
 import FavoriteButton from "../../ui/FavoriteButton";
@@ -14,22 +15,18 @@ const PLACEHOLDER =
   "https://cdn.pixabay.com/photo/2020/11/23/06/21/television-5768804_640.png";
 
 const PosterCard = styled.div`
-  position: relative;
+  ${tile}
   flex: 0 0 160px;
   height: 230px;
-  border-radius: ${({ theme }) => theme.radii.md};
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.card};
 
   p {
     position: absolute;
-    bottom: 0.6rem;
-    left: 0.6rem;
-    right: 0.6rem;
-    z-index: 101;
+    bottom: 0.8rem;
+    left: 0.8rem;
+    right: 0.8rem;
+    z-index: 2;
     font-size: 1.3rem;
     font-weight: 500;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -39,6 +36,13 @@ const PosterCard = styled.div`
     flex-basis: 120px;
     height: 175px;
   }
+`;
+
+const Scrim = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(7, 7, 15, 0.85), transparent 55%);
 `;
 
 const PosterLink = styled(Link)`
@@ -84,6 +88,7 @@ function VodRow({ title, categoryId, viewAllLink }) {
             <PosterCard key={series.id}>
               <PosterLink to={url}>
                 <Image src={poster} altText={series.name} />
+                <Scrim />
                 <p>{series.name}</p>
               </PosterLink>
               <FavoriteButton

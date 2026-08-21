@@ -3,7 +3,8 @@ import styled from "styled-components";
 export const Footer = styled.footer`
   display: flex;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.6rem;
   align-items: center;
-  color: ${({ theme }) => theme.colors.text};
+  font-size: 1.3rem;
+  color: ${({ theme }) => theme.colors.muted};
 `;

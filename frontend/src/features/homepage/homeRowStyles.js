@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { tile } from "../../styles/mixins";
 
 export const Wrapper = styled.div`
   max-width: 1800px;
-  margin: 2.4rem auto 0;
+  margin: 3.2rem auto 0;
   padding: 0 var(--page-px);
 
   h2 {
@@ -22,15 +23,16 @@ export const ViewAllLink = styled(Link)`
   font-size: 1.3rem;
   font-weight: 500;
   color: ${({ theme }) => theme.colors.muted};
+  transition: color 0.2s ease;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.accent};
+    color: ${({ theme }) => theme.colors.accentSoft};
   }
 `;
 
 export const Row = styled.div`
   display: flex;
-  gap: 1.5rem;
+  gap: 1.6rem;
   overflow-x: auto;
   padding-bottom: 2rem;
 
@@ -40,16 +42,16 @@ export const Row = styled.div`
 `;
 
 export const Card = styled.div`
-  position: relative;
-  flex: 0 0 220px;
-  height: 130px;
-  border-radius: ${({ theme }) => theme.radii.sm};
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.card};
+  ${tile}
+  flex: 0 0 290px;
+  height: 164px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 
   @media (max-width: 600px) {
-    flex-basis: 160px;
-    height: 95px;
+    flex-basis: 220px;
+    height: 124px;
   }
 `;
 
@@ -58,17 +60,28 @@ export const CardLink = styled(Link)`
   position: relative;
   width: 100%;
   height: 100%;
+  padding: 1.4rem;
+  box-sizing: border-box;
   color: ${({ theme }) => theme.colors.text};
 `;
 
 export const Title = styled.p`
-  position: absolute;
-  bottom: 1.2rem;
-  left: 0.8rem;
-  right: 0.8rem;
-  z-index: 101;
-  font-size: 1.4rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  position: relative;
+  z-index: 2;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const Subtitle = styled.p`
+  position: relative;
+  z-index: 2;
+  margin-top: 0.3rem;
+  font-size: 1.15rem;
+  color: ${({ theme }) => theme.colors.muted};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -10,6 +10,7 @@ import Home, { loader } from "./features/homepage/Home";
 import HomeSkeleton from "./features/homepage/HomeSkeleton";
 import GlobalStyles from "./styles/GlobalStyles";
 import AppLayout from "./ui/AppLayout";
+import AuroraBackdrop from "./ui/AuroraBackdrop";
 import LiveChannels from "./features/live/LiveChannels";
 import Error from "./ui/Error";
 import NotFound from "./ui/NotFound";
@@ -116,6 +117,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <ReactQueryDevtools initialIsOpen={false} />
         <GlobalStyles />
+        <AuroraBackdrop />
         <RouterProvider router={router} />
       </ThemeProvider>
     </QueryClientProvider>

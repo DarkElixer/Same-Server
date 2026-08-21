@@ -8,6 +8,10 @@ const Wrapper = styled.div`
   max-width: 1800px;
   margin: 2.4rem auto;
   padding: 0 var(--page-px);
+
+  @media (max-width: 768px) {
+    margin-bottom: 10.4rem;
+  }
 `;
 
 const MOBILE_BREAKPOINT = 600;

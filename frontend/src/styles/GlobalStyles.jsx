@@ -9,7 +9,13 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: inherit;
 }
 button{
-    font-family: "Poppins", sans-serif;
+    font-family: "Manrope", sans-serif;
+}
+h1, h2, h3 {
+    text-wrap: balance;
+}
+p {
+    text-wrap: pretty;
 }
 html {
     box-sizing: border-box;
@@ -18,12 +24,14 @@ html {
     --page-px: clamp(1.6rem, 4vw, 6rem);
 }
 body {
-    font-family: "Poppins", sans-serif;
+    font-family: "Manrope", sans-serif;
     background-color: ${({ theme }) => theme.colors.background};
-    background-image: radial-gradient(circle at 20% 0%, rgba(42, 125, 143, 0.12), transparent 40%),
-        radial-gradient(circle at 90% 20%, rgba(255, 193, 7, 0.06), transparent 35%);
-    background-attachment: fixed;
     color: ${({ theme }) => theme.colors.text};
+    position: relative;
+}
+:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.accentSoft};
+    outline-offset: 2px;
 }
 .player{
     place-content: center;
@@ -32,15 +40,17 @@ body {
 
 a,a:link{
  text-decoration: none;
+ color: inherit;
 }
 
 .header {
     background-color: ${({ theme }) => theme.colors.glass};
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: ${({ theme }) => theme.blur.glass};
+    -webkit-backdrop-filter: ${({ theme }) => theme.blur.glass};
     border-bottom: 1px solid ${({ theme }) => theme.colors.border};
     position: sticky;
     top: var(--app-header-top, 6rem);
+    margin-top: var(--app-header-top, 6rem);
     z-index: 1000;
     padding: 1.2rem var(--page-px) 1rem;
     display: flex;

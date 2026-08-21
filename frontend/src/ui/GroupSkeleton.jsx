@@ -12,7 +12,7 @@ const StyledGroupSkeleton = styled.div`
 const SkeletonItem = styled(SkeletonBlock)`
   width: 90px;
   height: 32px;
-  border-radius: ${({ theme }) => theme.radii.md};
+  border-radius: ${({ theme }) => theme.radii.pill};
   display: inline-block;
   flex: 0 0 auto;
 `;

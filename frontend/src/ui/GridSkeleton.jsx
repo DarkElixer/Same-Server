@@ -4,7 +4,7 @@ import { SkeletonBlock } from "./skeletonStyles";
 
 const SkeletonTile = styled(SkeletonBlock)`
   margin: 2rem;
-  border-radius: ${({ theme }) => theme.radii.sm};
+  border-radius: ${({ theme }) => theme.radii.md};
   height: calc(100% - 4rem);
 `;
 

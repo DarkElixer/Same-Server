@@ -10,15 +10,21 @@ export const shimmer = keyframes`
 `;
 
 export const SkeletonBlock = styled.div`
-  background: ${({ theme }) => theme.colors.surfaceRaised};
+  background: rgba(255, 255, 255, 0.06);
   background-image: linear-gradient(
     to right,
-    ${({ theme }) => theme.colors.surfaceRaised} 0%,
-    ${({ theme }) => theme.colors.surfaceRaisedHighlight} 20%,
-    ${({ theme }) => theme.colors.surfaceRaised} 40%,
-    ${({ theme }) => theme.colors.surfaceRaised} 100%
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.14) 20%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0.06) 100%
   );
   background-repeat: no-repeat;
   background-size: 800px 40px;
   animation: ${shimmer} 2s infinite linear;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-image: none;
+    background-color: rgba(255, 255, 255, 0.09);
+  }
 `;

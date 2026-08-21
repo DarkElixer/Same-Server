@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 import { PiSkipForwardFill } from "react-icons/pi";
+import { glassHi } from "../../styles/mixins";
 import "../../styles/player_overlay.css";
 import {
   getProgress,
@@ -20,29 +21,28 @@ const POSTER =
   "https://www.tellyupdates.com/wp-content/uploads/2021/08/opinion-the-seasonal-shows-hit-formula-on-indian-tv-920x51801-1.jpg";
 
 const NextEpisodeButton = styled.button`
+  ${glassHi}
   display: flex;
   align-items: center;
   gap: 0.6rem;
   flex-shrink: 0;
-  background: ${({ theme }) => theme.colors.glass};
-  border: 1px solid ${({ theme }) => theme.colors.border};
   color: ${({ theme }) => theme.colors.text};
-  padding: 0.7rem 1.4rem;
+  padding: 0.9rem 1.6rem;
   border-radius: ${({ theme }) => theme.radii.pill};
   font-size: 1.3rem;
   font-weight: 600;
   cursor: pointer;
+  transition: color 0.2s ease;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.accent};
-    color: ${({ theme }) => theme.colors.accent};
+    color: ${({ theme }) => theme.colors.accentSoft};
   }
 
   @media (max-width: 600px) {
     span {
       display: none;
     }
-    padding: 0.7rem;
+    padding: 0.9rem;
   }
 `;
 

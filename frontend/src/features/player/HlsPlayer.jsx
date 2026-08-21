@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Hls from "hls.js";
 import styled, { keyframes } from "styled-components";
+import { glassHi } from "../../styles/mixins";
 import {
   PiPlayFill,
   PiPauseFill,
@@ -75,22 +76,26 @@ const ControlsOverlay = styled.div`
 `;
 
 const Bar = styled.div`
+  ${glassHi}
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  padding: 0 1.6rem 1.4rem;
+  gap: 1.2rem;
+  margin: 0 1.6rem 1.6rem;
+  padding: 1.6rem 2rem;
+  border-radius: ${({ theme }) => theme.radii.lg};
 
   @media (max-width: 600px) {
-    padding: 0 1rem 1rem;
-    gap: 0.5rem;
+    margin: 0 0.8rem 1rem;
+    padding: 1.2rem 1.4rem;
+    gap: 0.8rem;
   }
 `;
 
 const ScrubTrack = styled.div`
   position: relative;
-  height: 0.5rem;
+  height: 0.4rem;
   border-radius: ${({ theme }) => theme.radii.pill};
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.16);
   cursor: pointer;
   touch-action: none;
 `;
@@ -103,7 +108,7 @@ const ScrubFill = styled.div`
   border-radius: inherit;
   width: ${({ $pct }) => $pct}%;
   background: ${({ $variant, theme }) =>
-    $variant === "buffered" ? "rgba(255, 255, 255, 0.4)" : theme.colors.accent};
+    $variant === "buffered" ? "rgba(255, 255, 255, 0.4)" : theme.colors.gradientBar};
 `;
 
 const ScrubThumb = styled.div`
@@ -114,7 +119,8 @@ const ScrubThumb = styled.div`
   width: 1.3rem;
   height: 1.3rem;
   border-radius: ${({ theme }) => theme.radii.circle};
-  background: ${({ theme }) => theme.colors.accent};
+  background: #fff;
+  box-shadow: 0 0 16px rgba(124, 92, 255, 0.9);
 `;
 
 const ButtonsRow = styled.div`
@@ -141,7 +147,7 @@ const IconButton = styled.button`
   line-height: 0;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.accent};
+    color: ${({ theme }) => theme.colors.accentSoft};
   }
 
   @media (max-width: 600px) {
@@ -168,7 +174,7 @@ const VolumeGroup = styled.div`
 
   input[type="range"] {
     width: 8rem;
-    accent-color: ${({ theme }) => theme.colors.accent};
+    accent-color: ${({ theme }) => theme.colors.accentSoft};
   }
 
   @media (max-width: 600px) {
@@ -179,9 +185,9 @@ const VolumeGroup = styled.div`
 `;
 
 const QualitySelect = styled.select`
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.08);
   color: ${({ theme }) => theme.colors.text};
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.sm};
   font-size: 1.3rem;
   padding: 0.3rem 0.5rem;
@@ -198,11 +204,11 @@ const TopOverlay = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.6rem;
+  padding: 2.4rem 2.6rem;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.8) 0%,
-    rgba(0, 0, 0, 0.4) 50%,
+    rgba(5, 5, 11, 0.75) 0%,
+    rgba(5, 5, 11, 0.35) 50%,
     transparent 100%
   );
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
@@ -210,33 +216,37 @@ const TopOverlay = styled.div`
   transition: opacity 0.25s ease;
 
   @media (max-width: 600px) {
-    padding: 1rem;
+    padding: 1.4rem 1.6rem;
   }
 `;
 
 const TitleGroup = styled.div`
+  ${glassHi}
   display: flex;
   align-items: center;
   gap: 1.2rem;
   min-width: 0;
+  padding: 0.9rem 1.6rem 0.9rem 1rem;
+  border-radius: ${({ theme }) => theme.radii.pill};
 `;
 
 const BackButton = styled.button`
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.4);
-  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   color: white;
-  width: 3.6rem;
-  height: 3.6rem;
+  width: 3.4rem;
+  height: 3.4rem;
   border-radius: ${({ theme }) => theme.radii.circle};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   cursor: pointer;
+  transition: background 0.2s ease;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(255, 255, 255, 0.16);
   }
 
   @media (max-width: 600px) {
@@ -253,18 +263,18 @@ const TitleText = styled.div`
   min-width: 0;
 
   h1 {
-    font-size: 1.8rem;
-    font-weight: 600;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
     color: white;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   span {
-    font-size: 1.3rem;
-    color: rgba(255, 255, 255, 0.75);
+    font-size: 1.25rem;
+    color: ${({ theme }) => theme.colors.muted};
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -272,7 +282,7 @@ const TitleText = styled.div`
 
   @media (max-width: 600px) {
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
     }
     span {
       font-size: 1.1rem;
@@ -367,24 +377,37 @@ const RetryButton = styled.button`
   }
 `;
 
+const livePulse = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+`;
+
 const LiveBadge = styled.span`
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  background: ${({ theme }) => theme.colors.danger};
-  color: white;
-  font-size: 1.1rem;
+  gap: 0.5rem;
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 0.3rem 0.8rem;
-  border-radius: ${({ theme }) => theme.radii.sm};
+  letter-spacing: 0.1em;
+  padding: 0.4rem 0.9rem;
+  border-radius: ${({ theme }) => theme.radii.pill};
 
   &::before {
     content: "";
     width: 0.6rem;
     height: 0.6rem;
     border-radius: 50%;
-    background: white;
+    background: ${({ theme }) => theme.colors.live};
+    animation: ${livePulse} 1.6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      animation: none;
+    }
   }
 `;
 

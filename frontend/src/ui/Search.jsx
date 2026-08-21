@@ -1,62 +1,101 @@
 import { useNavigate, Link } from "react-router-dom";
-import { PiMagnifyingGlass } from "react-icons/pi";
+import { PiMagnifyingGlassBold, PiX } from "react-icons/pi";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styled, { css } from "styled-components";
 import { useDebounce } from "../hooks/useDebounce";
 import { getVodItemBySearch } from "../services/apiVod";
 import { replaceSpecialChars } from "../util/helper";
+import { glass, glassHi } from "../styles/mixins";
 
-const SearchIcon = styled(PiMagnifyingGlass)`
-  height: 4rem;
-  width: 4rem;
+const IconButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  right: 0;
+  right: 1.2rem;
+  color: ${({ theme }) => theme.colors.muted};
+  transition: color 0.2s ease;
+
+  svg {
+    height: 1.8rem;
+    width: 1.8rem;
+  }
 
   @media (max-width: 900px) {
-    width: 2.5rem;
-    height: 2.5rem;
+    position: static;
+    width: 4rem;
+    height: 4rem;
+    color: ${({ theme }) => theme.colors.text};
+
+    svg {
+      width: 2.2rem;
+      height: 2.2rem;
+    }
+  }
+`;
+
+const MobileCloseButton = styled(IconButton)`
+  @media (max-width: 900px) {
+    position: fixed;
+    top: 1.4rem;
+    right: 1.6rem;
+    z-index: 2002;
   }
 `;
 const Input = styled.input`
-  padding: 1rem 1.5rem;
-  background-color: ${({ theme }) => theme.colors.glass};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  ${glass}
+  padding: 0.9rem 3.6rem 0.9rem 1.6rem;
   border-radius: ${({ theme }) => theme.radii.pill};
   outline: none;
-  transition: all 0.5s linear, border-color 0.2s ease;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease;
   width: 0;
   opacity: 0;
   color: ${({ theme }) => theme.colors.text};
-  font-size: 2rem;
+  font-family: "Manrope", sans-serif;
+  font-size: 1.3rem;
   font-weight: 400;
 
-  &:focus {
-    border-color: ${({ theme }) => theme.colors.accent};
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.muted};
   }
-  @media (max-width: 900px) {
-    padding: 0.5rem;
-    font-size: 1.5rem;
-  }
+
   &:focus {
+    border-color: ${({ theme }) => theme.colors.accentSoft};
     opacity: 1;
-    width: 60vw;
+    width: 32rem;
   }
   ${({ $active }) =>
     $active &&
     css`
       opacity: 1;
-      width: 60vw;
+      width: 32rem;
     `}
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 0.15s linear;
+  }
+
   @media (max-width: 900px) {
+    width: 0;
+
     &:focus {
-      width: calc(100vw - 10rem);
+      width: 0;
     }
     ${({ $active }) =>
       $active &&
       css`
-        width: calc(100vw - 10rem);
+        position: fixed;
+        top: 1.4rem;
+        left: 1.6rem;
+        right: 6rem;
+        width: auto !important;
+        z-index: 2001;
       `}
   }
 `;
@@ -67,29 +106,36 @@ const StyledSearch = styled.div`
   align-items: center;
   &:hover ${Input} {
     opacity: 1;
-    width: 60vw;
+    width: 32rem;
+  }
+
+  @media (max-width: 900px) {
+    &:hover ${Input} {
+      width: 0;
+    }
   }
 `;
 
 const Suggestions = styled.ul`
+  ${glassHi}
   position: absolute;
-  top: 100%;
+  top: calc(100% + 0.8rem);
   right: 0;
-  width: 60vw;
+  width: 32rem;
   max-height: 60vh;
   overflow-y: auto;
-  background: ${({ theme }) => theme.colors.glass};
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.md};
-  box-shadow: ${({ theme }) => theme.shadows.card};
   list-style: none;
+  padding: 0.6rem;
   z-index: 2000;
 
   @media (max-width: 900px) {
-    width: calc(100vw - 2rem);
-    right: -1rem;
+    position: fixed;
+    top: 6.4rem;
+    left: 1.6rem;
+    right: 1.6rem;
+    width: auto;
+    z-index: 2001;
   }
 `;
 
@@ -98,16 +144,24 @@ const SuggestionItem = styled.li`
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.8rem 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: ${({ theme }) => theme.radii.sm};
     color: ${({ theme }) => theme.colors.text};
     text-decoration: none;
+    font-size: 1.3rem;
   }
   a:hover {
-    background: ${({ theme }) => theme.colors.surfaceRaised};
+    background: ${({ theme }) => theme.colors.surfaceLight};
   }
   .type {
-    font-size: 1.2rem;
-    color: ${({ theme }) => theme.colors.muted};
+    flex: none;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.3rem 0.8rem;
+    border-radius: ${({ theme }) => theme.radii.pill};
+    background: rgba(255, 255, 255, 0.08);
+    color: ${({ theme }) => theme.colors.accentSoft};
     text-transform: uppercase;
   }
 `;
@@ -116,6 +170,7 @@ function Search() {
   const [input, setInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef(null);
+  const inputRef = useRef(null);
   const navigate = useNavigate();
   const debouncedQuery = useDebounce(input.trim(), 300);
 
@@ -131,8 +186,15 @@ function Search() {
         setShowSuggestions(false);
       }
     }
+    function handleEscape(e) {
+      if (e.key === "Escape") setShowSuggestions(false);
+    }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   function handleSubmit(e) {
@@ -142,14 +204,30 @@ function Search() {
     navigate(`/search?q=${encodeURIComponent(input.trim())}`);
   }
 
+  function handleIconClick() {
+    if (input.trim()) {
+      handleSubmit({ preventDefault: () => {} });
+      return;
+    }
+    setShowSuggestions(true);
+    inputRef.current?.focus();
+  }
+
+  function handleClose() {
+    setShowSuggestions(false);
+    setInput("");
+    inputRef.current?.blur();
+  }
+
   const suggestions = suggestionsData?.data ?? [];
 
   return (
     <StyledSearch ref={containerRef}>
       <form onSubmit={handleSubmit}>
         <Input
+          ref={inputRef}
           type="text"
-          placeholder="Search Movie or Series"
+          placeholder="Search movies or series"
           value={input}
           $active={showSuggestions}
           onChange={(e) => {
@@ -159,7 +237,15 @@ function Search() {
           onFocus={() => setShowSuggestions(true)}
         />
       </form>
-      <SearchIcon onClick={handleSubmit} />
+      {showSuggestions ? (
+        <MobileCloseButton type="button" onClick={handleClose} aria-label="Close search">
+          <PiX />
+        </MobileCloseButton>
+      ) : (
+        <IconButton type="button" onClick={handleIconClick} aria-label="Search">
+          <PiMagnifyingGlassBold />
+        </IconButton>
+      )}
       {showSuggestions && debouncedQuery.length > 1 && suggestions.length > 0 && (
         <Suggestions>
           {suggestions.map((item) => (

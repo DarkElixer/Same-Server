@@ -1,68 +1,127 @@
 import { NavLink, Outlet, useNavigation } from "react-router-dom";
 import { PiHeartFill } from "react-icons/pi";
-import styled from "styled-components";
-import { Heading } from "./Heading";
+import { MdCast } from "react-icons/md";
+import styled, { css } from "styled-components";
+import { pill, pillOn, glassHi } from "../styles/mixins";
 import Loader from "./Loader";
 import Search from "./Search";
+import TabBar from "./TabBar";
 import { useEffect, useState } from "react";
 import { useScrollDirection } from "../hooks/useScrollDirection";
 
-const Header = styled.header`
+const Nav = styled.nav`
+  ${glassHi}
+  position: fixed;
+  top: 2.6rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(${({ $hidden }) => ($hidden ? "-8rem" : "0")});
+  opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 var(--page-px);
-  height: 6rem;
-  position: sticky;
-  top: 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  background-color: ${({ theme }) => theme.colors.glass};
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  gap: 0.8rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: ${({ theme }) => theme.radii.pill};
   z-index: 1500;
-  transform: translateY(${({ $hidden }) => ($hidden ? "-100%" : "0")});
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
-  @media (max-width: 600px) {
-    height: 5.5rem;
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 0.15s linear;
+  }
+
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
-const LogoContainer = styled.div`
+const Brand = styled.span`
   display: flex;
   align-items: center;
-  height: 100%;
+  gap: 0.7rem;
+  padding: 0 1.2rem 0 0.6rem;
+  font: 800 1.3rem/1 "Space Grotesk", sans-serif;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 `;
 
-const StyledLogo = styled.img`
-  height: 3.5rem;
-  width: auto;
-  object-fit: contain;
-  transition: transform 0.3s ease;
+const Dot = styled.span`
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.gradientBar};
+  box-shadow: 0 0 12px rgba(124, 92, 255, 0.9);
+`;
 
-  &:hover {
-    transform: scale(1.05);
+const NavItem = styled(NavLink)`
+  ${pill}
+  &.active {
+    ${pillOn}
   }
 `;
 
-const NavIcons = styled.div`
+const Divider = styled.span`
+  width: 1px;
+  height: 2.2rem;
+  background: ${({ theme }) => theme.colors.border};
+  margin: 0 0.4rem;
+`;
+
+const IconPill = styled.span`
+  ${pill}
+  padding: 0.8rem;
+  font-size: 1.6rem;
+`;
+
+const Avatar = styled.span`
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.gradientBar};
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: center;
+  font: 700 1.1rem/1 "Space Grotesk", sans-serif;
+  color: ${({ theme }) => theme.colors.textOnLight};
+`;
 
-  @media (max-width: 600px) {
-    gap: 0.8rem;
+const MobileHeader = styled.header`
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.4rem var(--page-px) 1rem;
+
+  @media (max-width: 768px) {
+    display: flex;
   }
 `;
 
-const MyListLink = styled(NavLink)`
+const MobileBrand = styled(Brand)`
+  padding: 0;
+`;
+
+const MobileIcons = styled.div`
+  margin-left: auto;
   display: flex;
   align-items: center;
+  gap: 0.4rem;
+`;
+
+const MobileHeartLink = styled(NavLink)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  font-size: 2.2rem;
   color: ${({ theme }) => theme.colors.text};
-  font-size: clamp(2rem, 1.5vw + 1rem, 2.4rem);
 
   &.active {
-    color: ${({ theme }) => theme.colors.accent};
+    color: ${({ theme }) => theme.colors.accentSoft};
+  }
+`;
+
+const PageArea = styled.div`
+  @media (max-width: 768px) {
+    padding-bottom: 10.4rem;
   }
 `;
 
@@ -86,36 +145,43 @@ function AppLayout() {
   }, []);
 
   useEffect(() => {
-    const headerTop = isHidden
-      ? "0px"
-      : isMobile
-      ? "5.5rem"
-      : "6rem";
-    document.documentElement.style.setProperty("--app-header-top", headerTop);
-  }, [isHidden, isMobile]);
+    document.documentElement.style.setProperty("--app-header-top", isMobile ? "9rem" : "8.6rem");
+  }, [isMobile]);
 
   return (
     <>
-      <Header $hidden={isHidden}>
-        <NavLink to="/">
-          <LogoContainer>
-            {!isMobile ? (
-              <Heading as="h1" $type="display">
-                I P T V
-              </Heading>
-            ) : (
-              <StyledLogo src="/logo.svg" alt="IPTV Logo" />
-            )}
-          </LogoContainer>
-        </NavLink>
-        <NavIcons>
+      <Nav $hidden={isHidden}>
+        <Brand>
+          <Dot />
+          LIVE TV
+        </Brand>
+        <NavItem to="/" end>
+          Home
+        </NavItem>
+        <NavItem to="/live/categories">Live</NavItem>
+        <NavItem to="/vod/categories">Movies &amp; Series</NavItem>
+        <NavItem to="/my-list">My List</NavItem>
+        <Divider />
+        <Search />
+        <IconPill as="span" title="Cast">
+          <MdCast />
+        </IconPill>
+        <Avatar>G</Avatar>
+      </Nav>
+      <MobileHeader>
+        <MobileBrand>
+          <Dot />
+          LIVE TV
+        </MobileBrand>
+        <MobileIcons>
           <Search />
-          <MyListLink to="/my-list" aria-label="My List">
+          <MobileHeartLink to="/my-list" aria-label="My List">
             <PiHeartFill />
-          </MyListLink>
-        </NavIcons>
-      </Header>
-      {loading ? <Loader /> : <Outlet />}
+          </MobileHeartLink>
+        </MobileIcons>
+      </MobileHeader>
+      <PageArea>{loading ? <Loader /> : <Outlet />}</PageArea>
+      <TabBar />
     </>
   );
 }

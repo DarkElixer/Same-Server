@@ -2,14 +2,15 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 const StyledImage = styled.img`
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: ${(prop) => (prop.$variant === "small" ? "none" : "fill")};
+  object-fit: ${(prop) => (prop.$variant === "small" ? "none" : "cover")};
   mask-image: linear-gradient(black, transparent 90%);
-  background: ${({ theme }) => theme.colors.imagePlaceholder};
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
   border-radius: inherit;
-  z-index: 100;
+  z-index: 0;
 `;
 function Image({ variant, src, altText }) {
   const imageRef = useRef(null);
@@ -18,7 +19,7 @@ function Image({ variant, src, altText }) {
     function addImg(e) {
       e.target.src =
         "https://cdn.pixabay.com/photo/2020/11/23/06/21/television-5768804_640.png";
-      e.target.style.objectFit = "fill";
+      e.target.style.objectFit = "cover";
     }
     imageEle.addEventListener("error", addImg);
     imageEle.src = src;
