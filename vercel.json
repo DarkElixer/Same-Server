@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run prod",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    { "source": "/(authenticate|profile|live|vod)(.*)", "destination": "/api" },
+    { "source": "/((?!.*\\.[\\w]+$).*)", "destination": "/index.html" }
+  ]
+}
