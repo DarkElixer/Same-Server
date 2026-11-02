@@ -2,7 +2,7 @@
   "buildCommand": "npm run prod",
   "outputDirectory": "frontend/dist",
   "rewrites": [
-    { "source": "/(authenticate|profile|live|vod)(.*)", "destination": "/api" },
+    { "source": "/(authenticate|profile|live|vod)(.*)", "destination": "/api/$1$2" },
     { "source": "/((?!.*\\.[\\w]+$).*)", "destination": "/index.html" }
   ]
 }
